@@ -57,7 +57,7 @@
             width: 250px;
             text-align: center;
         }
-        .food-court button, .food-item button {
+        .food-court a, .food-item button {
             width: 100%;
             padding: 10px;
             font-size: 16px;
@@ -66,8 +66,11 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
         }
-        .food-court button:hover, .food-item button:hover {
+        .food-court a:hover, .food-item button:hover {
             background-color: #45a049;
         }
         footer {
@@ -104,24 +107,25 @@
     <section class="food-courts">
         <h2 class="section-title">Food Courts</h2>
         <div class="food-court">
-            <button>Foodcourt 1</button>
+            <a href="FoodCourts/FC1.php">Foodcourt 1</a>
         </div>
         <div class="food-court">
-            <button>Foodcourt 2</button>
+            <a href="FoodCourts/FC2.php">Foodcourt 2</a>
         </div>
         <div class="food-court">
-            <button>Foodcourt 3</button>
+            <a href="FoodCourts/FC3.php">Foodcourt 3</a>
         </div>
         <div class="food-court">
-            <button>Foodcourt 4</button>
+            <a href="FoodCourts/FC4.php">Foodcourt 4</a>
         </div>
         <div class="food-court">
-            <button>Bang Deli @ Foodcourt 5</button>
+            <a href="FoodCourts/FC5.php">Bang Deli @ Foodcourt 5</a>
         </div>
         <div class="food-court">
-            <button>Foodcourt 6</button>
+            <a href="FoodCourts/FC6.php">Foodcourt 6</a>
         </div>
     </section>
+
     <footer>
         <p>&copy; 2025 Food Courts</p>
         <p><a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
