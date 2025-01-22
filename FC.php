@@ -11,11 +11,22 @@
             padding: 0;
             background-color: #f8f8f8;
         }
-        header {
+        header{
+            text-shadow:2px 2px 5px #000;
             background-color: #333;
             color: white;
+            font-size:16px;
             padding: 20px;
             text-align: center;
+            transition:05s;
+        }
+        
+        a{
+            font-size:16px;
+        }
+        
+        header nav a:hover{
+            font-size:18px;
         }
         header nav a {
             color: white;
@@ -26,10 +37,10 @@
             text-decoration: underline;
         }
         .hero {
-            background-image: url(fc.jpeg);
+            background-image: url(fc1_1.jpg);
             height: 300px;
+            background-size: cover;
             color: white;
-            display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
@@ -43,8 +54,9 @@
             color: #333;
         }
         .food-courts, .most-ordered {
+            text-align:center;
             display: flex;
-            justify-content: space-around;
+            justify-content:center;
             margin: 20px;
             flex-wrap: wrap;
         }
@@ -58,7 +70,7 @@
             text-align: center;
         }
         .food-court a, .food-item button {
-            width: 100%;
+            width: 90%;
             padding: 10px;
             font-size: 16px;
             background-color: #4CAF50;
@@ -84,16 +96,23 @@
             margin: 0 10px;
             text-decoration: none;
         }
+        
+        #background-music {
+            display: none;
+        }
     </style>
 </head>
 <body>
-
+    <audio id="background-music" autoplay loop>
+        <source src="music/JazzMusic.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
     <header>
         <h1>Food Ordering System @ SP</h1>
         <nav>
-            <a href="#">Home</a>
+            <a href="Homepage.php">Home</a>
             <a href="FC.php">Food Courts</a>
-            <a href="#">Most Ordered</a>
+            <a href="Most_Order.php">Most Ordered</a>
             <a href="#">About Us</a>
             <a href="#">Contact</a>
             <a href="login.php">Logout</a>
@@ -128,8 +147,20 @@
 
     <footer>
         <p>&copy; 2025 Food Courts</p>
-        <p><a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
+        <p><a target="_blank" href="https://www.starbucks.com/terms/suppliers-standard-terms-and-conditions/">Terms</a> | <a target="_blank" href="https://www.starbucks.com/terms/privacy-notice/">Privacy Policy</a> | <a href="#">Contact</a></p>
     </footer>
 
 </body>
+<script>
+    let musicStarted = false;
+    window.addEventListener('scroll', () => {
+        if (!musicStarted) {
+            document.getElementById('background-music').play();
+            musicStarted = true;
+        }
+    });
+    
+    const audio = document.getElementById('background-music');
+    audio.volume = 0.25; // Set volume to 50%
+</script>
 </html>

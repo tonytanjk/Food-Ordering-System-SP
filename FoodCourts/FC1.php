@@ -1,10 +1,14 @@
 <?php
-// Assuming you have a database connection file 'db_connection.php'
+//include('db_connection.php');
 // include('db_connection.php'); // Uncomment once DB is available
 
 // Query to get vendors for Food Court 2 (change accordingly for FC3 to FC6)
-$query = "SELECT * FROM vendors WHERE food_court_id = 2";  // FC2
-$result = mysqli_query($conn, $query);
+//$query = "SELECT * FROM vendors WHERE food_court_id = 2";  // FC2
+//$result = mysqli_query($conn, $query);
+
+//if (!$result) {
+//    die ("Query failed: " . mysqli_error($conn));
+//
 ?>
 
 <!DOCTYPE html>
@@ -78,7 +82,7 @@ $result = mysqli_query($conn, $query);
     <div class="container">
         <h1>Food Court 2 Vendors</h1>
         <div class="vendor-grid">
-            <?php
+            <?php            
             if (mysqli_num_rows($result) > 0) {
                 while ($vendor = mysqli_fetch_assoc($result)) {
                     // Display vendor card dynamically
