@@ -1,9 +1,27 @@
 <?php
-session_start();
+// Include database connection file
+include 'db_connection.php'; // Make sure this file contains your database connection logic
 
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    header('Location: ./UserProcess/login.php');
-    exit;
+// Fetch the user's account balance from the database
+if (isset($_SESSION['user_id'])) {
+    $userId = $_SESSION['user_id'];
+
+    // Query to fetch account balance
+    $query = "SELECT account_balance FROM users WHERE user_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        $accountBalance = $row['account_balance'];
+    } else {
+        $accountBalance = 0.00; // Default balance if user is not found
+    }
+} else {
+    // Redirect to login page if not logged in
+    header("Location: ./UserProcess/login.php");
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -236,7 +254,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
         <a href="#">Most Ordered</a>
         <a href="#">About Us</a>
         <a href="#">Contact</a>
-        <a href="login.php">Logout</a>
+        <a href="./UserProcess/login.php">Logout</a>
     </nav>
 </header>
 
@@ -318,7 +336,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
         <div class="side-section">
         <!-- Balance -->
         <div class="balance">
-            Account Balance: $<span id="balance">100.00</span>
+            Account Balance: $<span id="balance"><?php echo number_format($accountBalance, 2); ?></span>
         </div>
         <button id="toggle-btn" class="toggle-btn" onclick="toggleBalance()">Hide Balance</button>
         

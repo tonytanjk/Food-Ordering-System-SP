@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 // Retrieve user information from the database
 $user_id = $_SESSION['user_id'];
-$query = "SELECT * FROM users WHERE id = :user_id";
+$query = "SELECT * FROM users WHERE user_id = :user_id";
 $stmt = $pdo->prepare($query);
 $stmt->execute(['user_id' => $user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -47,12 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Update user details in the database
     $update_query = "UPDATE users 
-                     SET name = :name, email = :email, phone = :phone, 
+                     SET username = :username, email = :email, phone = :phone, 
                          password = :password, profile_picture = :profile_picture 
-                     WHERE id = :user_id";
+                     WHERE user_id = :user_id";
     $update_stmt = $pdo->prepare($update_query);
     $update_stmt->execute([
-        'name' => $username,
+        'username' => $username, // Correct parameter for username
         'email' => $email,
         'phone' => $phone,
         'password' => $password,
@@ -229,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="profile-header">
     <img src="<?= htmlspecialchars($user['profile_picture'] ?: '../assets/default_profile_pic.jpg') ?>" alt="User Profile Picture">
     <div>
-        <h2><?= htmlspecialchars($user['name']) ?></h2>
+        <h2><?= htmlspecialchars($user['username']) ?></h2>
         <div class="info">
             <p>Email: <?= htmlspecialchars($user['email']) ?></p>
             <p>Account Balance: $<?= htmlspecialchars($user['account_balance']) ?></p>
@@ -240,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <section id="view-section">
     <h2 class="section-title">Account Details</h2>
     <div class="section-content">
-        <p>Name: <?= htmlspecialchars($user['name']) ?></p>
+        <p>Name: <?= htmlspecialchars($user['username']) ?></p>
         <p>Email: <?= htmlspecialchars($user['email']) ?></p>
         <p>Phone: <?= htmlspecialchars($user['phone']) ?></p>
         <a href="javascript:void(0);" class="button" onclick="toggleEditForm()">Edit Account Details</a>
@@ -252,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="section-content">
         <form action="" method="POST" enctype="multipart/form-data">
             <label for="name">Name</label>
-            <input type="text" name="name" id="name" value="<?= htmlspecialchars($user['name']) ?>" required>
+            <input type="text" name="name" id="name" value="<?= htmlspecialchars($user['username']) ?>" required>
 
             <label for="email">Email</label>
             <input type="email" name="email" id="email" value="<?= htmlspecialchars($user['email']) ?>" required>

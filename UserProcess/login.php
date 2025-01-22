@@ -1,6 +1,6 @@
 <?php
 // Start session
-echo password_hash('testpassword', PASSWORD_DEFAULT);
+//echo password_hash('testpassword', PASSWORD_DEFAULT);
 session_start();
 
 // Database connection details
@@ -31,9 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($user && password_verify($inputPassword, $user['password'])) {
         // Successful login
-        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['username'] = $user['username'];
-        header("Location: ../Home.php"); // Redirect to a dashboard or homepage
+
+        // Debugging: Check session data
+
+        header("Location: ../Home.php");
         exit;
     } else {
         // Invalid credentials
