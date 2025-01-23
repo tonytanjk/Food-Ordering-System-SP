@@ -60,12 +60,12 @@ if (isset($_SESSION['user_id'])) {
     <header>
         <h1>Food Ordering System @ SP</h1>
         <nav>
-            <a href="./Home.php">Home</a>
-            <a href="../FoodCourts/FC.php">Food Courts</a>
-            <a href="#">Most Ordered</a>
-            <a href="#">About Us</a>
-            <a href="#">Contact</a>
-            <a href="../UserProcess/login.php">Logout</a>
+        <a href="../Home.php">Home</a>
+        <a href="FC.php">Food Courts</a>
+        <a href="../Most_Order.php">Most Ordered</a>
+        <a href="../UserProcess/About.html">About Us</a>
+        <a href="../UserProcess/Contact.html">Contact</a>
+        <a href="../UserProcess/login.php">Logout</a>
         </nav>        
         <?php if (!empty($_SESSION['cart'])): ?>
             <div class="cart-summary">
