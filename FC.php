@@ -91,8 +91,8 @@
             <a href="#">Home</a>
             <a href="FC.php">Food Courts</a>
             <a href="#">Most Ordered</a>
-            <a href="#">About Us</a>
-            <a href="#">Contact</a>
+            <a href="About.html">About Us</a>
+            <a href="Contact.html">Contact</a>
             <a href="login.php">Logout</a>
         </nav>
     </header>
