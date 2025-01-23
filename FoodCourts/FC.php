@@ -192,7 +192,7 @@
 <body>
 
     <header>
-        <h1>Food Ordering System @ SP</h1>
+        <h1>Food Courts @ SP</h1>
         <nav>
         <a href="../Home.php">Home</a>
         <a href="FC.php">Food Courts</a>
@@ -210,22 +210,22 @@
     <section class="food-courts">
         <h2 class="section-title">Food Courts</h2>
         <div class="food-court">
-            <a href="FoodCourts/FC1.php">Foodcourt 1</a>
+            <a href="FC1.php?food_court_id=1">Foodcourt 1</a>
         </div>
         <div class="food-court">
-            <a href="FoodCourts/FC2.php">Foodcourt 2</a>
+            <a href="FC2.php?food_court_id=2">Foodcourt 2</a>
         </div>
         <div class="food-court">
-            <a href="FoodCourts/FC3.php">Foodcourt 3</a>
+            <a href="FC3.php?food_court_id=3">Foodcourt 3</a>
         </div>
         <div class="food-court">
-            <a href="FoodCourts/FC4.php">Foodcourt 4</a>
+            <a href="FC4.php?food_court_id=4">Foodcourt 4</a>
         </div>
         <div class="food-court">
-            <a href="FoodCourts/FC5.php">Bang Deli @ Foodcourt 5</a>
+            <a href="FC5.php?food_court_id=5">Bang Deli @ Foodcourt 5</a>
         </div>
         <div class="food-court">
-            <a href="FoodCourts/FC6.php">Foodcourt 6</a>
+            <a href="FC6.php?food_court_id=6">Foodcourt 6</a>
         </div>
     </section>
 

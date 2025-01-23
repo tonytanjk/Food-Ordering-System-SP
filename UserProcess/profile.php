@@ -1,6 +1,5 @@
 <?php
-session_start();
-$pdo = new PDO("mysql:host=localhost;dbname=projectcsad", 'root', '');
+include '../db_connection.php'; // Include the database connection file
 
 // Ensure the user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -10,13 +9,18 @@ if (!isset($_SESSION['user_id'])) {
 
 // Retrieve user information from the database
 $user_id = $_SESSION['user_id'];
-$query = "SELECT * FROM users WHERE user_id = :user_id";
-$stmt = $pdo->prepare($query);
-$stmt->execute(['user_id' => $user_id]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// If no user data is found, redirect to login
-if (!$user) {
+// Query to fetch user details
+$query = "SELECT * FROM users WHERE user_id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($user = $result->fetch_assoc()) {
+    // User details retrieved successfully
+} else {
+    // If no user data is found, redirect to login
     session_destroy();
     header('Location: ../UserProcess/login.php');
     exit();

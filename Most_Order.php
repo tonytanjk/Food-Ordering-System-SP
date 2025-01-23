@@ -88,12 +88,12 @@
     <header>
         <h1>Most Ordered Foods</h1>
         <nav>
-            <a href="#">Home</a>
-            <a href="FC.php">Food Courts</a>
-            <a href="#">Most Ordered</a>
-            <a href="#">About Us</a>
-            <a href="#">Contact</a>
-            <a href="login.php">Logout</a>
+        <a href="./Home.php">Home</a>
+        <a href="./FoodCourts/FC.php">Food Courts</a>
+        <a href="#">Most Ordered</a>
+        <a href="#">About Us</a>
+        <a href="#">Contact</a>
+        <a href="./UserProcess/login.php">Logout</a>
         </nav>
     </header>
 

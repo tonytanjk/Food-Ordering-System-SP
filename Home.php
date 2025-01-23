@@ -246,7 +246,7 @@ if (isset($_SESSION['user_id'])) {
 </head>
 <body>
 
-<header
+    <header>
     <h1>Food Ordering System @ SP</h1>
     <nav>
         <a href="./Home.php">Home</a>
@@ -256,7 +256,7 @@ if (isset($_SESSION['user_id'])) {
         <a href="#">Contact</a>
         <a href="./UserProcess/login.php">Logout</a>
     </nav>
-</header>
+    </header>
 
 <div class="hero">
     <h1>Welcome to Our Food Ordering System</h1>

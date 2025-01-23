@@ -1,6 +1,6 @@
 <?php
 session_start();
-$pdo = new PDO("mysql:host=localhost;dbname=food_court", 'root', '');
+$pdo = new PDO("mysql:host=localhost;dbname=projectcsad", 'root', '');
 
 // Generate a tracking ID
 function generateTrackingID() {
