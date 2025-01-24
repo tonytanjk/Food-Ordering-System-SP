@@ -46,7 +46,7 @@ function getFoodItems($stallId, $conn) {
 
 // Fetch total sales amount
 function getTotalSales($conn) {
-    $query = "SELECT SUM(total_price) AS total_sales FROM orders";
+    $query = "SELECT SUM(total_amount) AS total_sales FROM orders";
     $result = $conn->query($query);
     return $result->fetch_assoc()['total_sales'] ?? 0.00;
 }
@@ -68,7 +68,7 @@ function getAverageOrderValue($conn) {
 // Fetch sales trends by date (last N days)
 function getSalesTrends($days, $conn) {
     $query = "
-        SELECT DATE(order_date) AS order_date, SUM(total_price) AS daily_sales 
+        SELECT DATE(order_date) AS order_date, SUM(total_amount) AS daily_sales 
         FROM orders 
         WHERE order_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
         GROUP BY DATE(order_date) 
@@ -84,12 +84,44 @@ function getSalesTrends($days, $conn) {
     return $trends;
 }
 
+// Fetch weekly revenue
+function getWeeklyRevenue($conn) {
+    $query = "
+        SELECT DATE(order_date) AS order_date, SUM(total_amount) AS daily_sales 
+        FROM orders 
+        WHERE order_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        GROUP BY DATE(order_date) 
+        ORDER BY order_date ASC";
+    $result = $conn->query($query);
+    $weeklyRevenue = 0.00;
+    while ($row = $result->fetch_assoc()) {
+        $weeklyRevenue += $row['daily_sales'];
+    }
+    return $weeklyRevenue;
+}
+
+function getTopSellingItems($conn, $foodCourtId, $stallId, $limit = 10) {
+    $query = "
+        SELECT fi.food_name, SUM(oi.quantity) AS total_quantity, SUM(oi.price * oi.quantity) AS total_revenue
+        FROM order_items oi
+        JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+        JOIN food_stalls fs ON fi.stall_id = fs.stall_id
+        WHERE fs.food_court_id = ? AND fs.stall_id = ?
+        GROUP BY fi.food_name
+        ORDER BY total_quantity DESC
+        LIMIT ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("iii", $foodCourtId, $stallId, $limit);
+    $stmt->execute();
+    return $stmt->get_result();
+}
 // Example usage for sales metrics (For Vendor)
 $accountBalance = getAccountBalance($userId, $conn);
 $totalSales = getTotalSales($conn);
 $totalOrders = getTotalOrders($conn);
 $averageOrderValue = getAverageOrderValue($conn);
 $salesTrends = getSalesTrends(7, $conn); // Last 7 days
+$weeklyRevenue = getWeeklyRevenue($conn);
 
 // Fetch food court ID and food items for a specific court or stall (For FC1 - FC6)
 $food_court_id = isset($_GET['food_court_id']) ? intval($_GET['food_court_id']) : 4;

@@ -2,34 +2,13 @@
 // Include database connection and common functions
 include '../scripts/common.php';
 
-// Redirect to login if user is not authenticated
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../UserProcess/login.php");
-    exit();
-}
-
-// Get vendor_id and food_court_id from URL parameters
-$vendor_id = isset($_GET['vendor_id']) ? intval($_GET['vendor_id']) : 0;
+// Get stall_id and food_court_id from URL parameters
+$stall_id = isset($_GET['stall_id']) ? intval($_GET['stall_id']) : 0;
 $food_court_id = isset($_GET['food_court_id']) ? intval($_GET['food_court_id']) : 0;
 
-// Fetch top-selling items for a specific vendor and food court
-function getTopSellingItems($conn, $vendor_id, $food_court_id, $limit = 10) {
-    $query = "
-        SELECT fi.food_name, SUM(oi.quantity) AS total_quantity, SUM(oi.price * oi.quantity) AS total_revenue
-        FROM order_items oi
-        JOIN food_items fi ON oi.food_id = fi.food_id
-        JOIN food_stalls fs ON fi.stall_id = fs.stall_id
-        WHERE fs.vendor_id = ? AND fs.food_court_id = ?
-        GROUP BY oi.food_id
-        ORDER BY total_quantity DESC
-        LIMIT ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("iii", $vendor_id, $food_court_id, $limit);
-    $stmt->execute();
-    return $stmt->get_result();
-}
+// Fetch top-selling items for the specified stall and food court
+$topSellingItems = getTopSellingItems($conn, $food_court_id, $stall_id);
 
-$topSellingItems = getTopSellingItems($conn, $vendor_id, $food_court_id);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -121,10 +100,10 @@ $topSellingItems = getTopSellingItems($conn, $vendor_id, $food_court_id);
     <header>
         <h1>Top Sales</h1>
         <nav>
-            <a href="../UserProcess/logout.php">Logout</a>
+            <a href='../Vendor/vendor_home.php'>Home</a>
             <a href="sales_metrics.php">Sales Metrics</a>
             <a href="top_sales.php">Top Sales</a>
-            <a href="revenue_metrics.php">Revenue Metrics</a>
+            <a href="../UserProcess/logout.php">Logout</a>
         </nav>
     </header>
 

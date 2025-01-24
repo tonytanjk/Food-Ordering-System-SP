@@ -1,19 +1,29 @@
-<?php 
-//DB Connection and Script Usage
-include '../scripts/common.php'; ?>
+<?php
+// Include database connection and common functions
+include '../scripts/common.php';
 
+// Get stall_id and food_court_id from URL parameters
+$stall_id = isset($_GET['stall_id']) ? intval($_GET['stall_id']) : 0;
+$food_court_id = isset($_GET['food_court_id']) ? intval($_GET['food_court_id']) : 0;
+
+// Function to get top-selling items for a specific stall and food court
+
+// Fetch top-selling items for the specified stall and food court
+$topSellingItems = getTopSellingItems($conn, $food_court_id, $stall_id);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Metrics</title>
+    <title>Top Sales</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            background-color: #f8f8f8;
             color: #333;
         }
 
@@ -54,58 +64,28 @@ include '../scripts/common.php'; ?>
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .metric-card {
-            background: #f9f9f9;
-            border-radius: 8px;
-            padding: 20px;
+        h2 {
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .metric-card h2 {
-            font-size: 24px;
-            color: #007bff;
-            margin: 10px 0;
-        }
-
-        .metric-card p {
-            font-size: 18px;
-            color: #555;
-        }
-
-        .sales-trends {
-            margin-top: 30px;
-        }
-
-        .sales-trends h2 {
-            font-size: 24px;
+            color: #444;
             margin-bottom: 20px;
         }
 
-        .trends-table {
+        .top-sales-table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .trends-table th, .trends-table td {
+        .top-sales-table th, .top-sales-table td {
             border: 1px solid #ddd;
             padding: 10px;
             text-align: left;
         }
 
-        .trends-table th {
-            background-color: #f4f4f9;
-            color: #333;
+        .top-sales-table th {
+            background-color: #f4f4f4;
         }
 
-        .trends-table tbody tr:nth-child(even) {
+        .top-sales-table tbody tr:nth-child(even) {
             background-color: #f9f9f9;
         }
 
@@ -120,51 +100,35 @@ include '../scripts/common.php'; ?>
 </head>
 <body>
     <header>
-        <h1>Sales Metrics Dashboard</h1>
-        <br
+        <h1>Top Sales</h1>
         <nav>
-            <a href="stall_configure.php">Stall</a>
+            <a href='../Vendor/vendor_home.php'>Home</a>
+            <a href="sales_metrics.php">Sales Metrics</a>
             <a href="top_sales.php">Top Sales</a>
-            <a href="revenue_metrics.php">Revenue Metrics</a>
-            <a href="../UserProcess/logout.php">Logout</a></br>
+            <a href="../UserProcess/logout.php">Logout</a>
         </nav>
     </header>
 
     <div class="container">
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <h2>Daily Sales</h2>
-                <p>$<?= number_format($totalSales, 2) ?></p>
-            </div>
-            <div class="metric-card">
-                <h2>Daily Orders</h2>
-                <p><?= $totalOrders ?></p>
-            </div>
-            <div class="metric-card">
-                <h2>Daily Sales Growth</h2>
-                <p><?= number_format($dailySalesGrowth, 2) ?>%</p>
-            </div>
-        </div>
-
-        <div class="sales-trends">
-            <h2>Sales Trends (Last 7 Days)</h2>
-            <table class="trends-table">
-                <thead>
+        <h2>Top Selling Items</h2>
+        <table class="top-sales-table">
+            <thead>
+                <tr>
+                    <th>Food Item</th>
+                    <th>Total Quantity Sold</th>
+                    <th>Total Revenue</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($item = $topSellingItems->fetch_assoc()): ?>
                     <tr>
-                        <th>Date</th>
-                        <th>Daily Sales</th>
+                        <td><?= htmlspecialchars($item['food_name']) ?></td>
+                        <td><?= $item['total_quantity'] ?></td>
+                        <td>$<?= number_format($item['total_revenue'], 2) ?></td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($salesTrends as $trend): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($trend['order_date']) ?></td>
-                            <td>$<?= number_format($trend['daily_sales'], 2) ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
     </div>
 
     <footer>

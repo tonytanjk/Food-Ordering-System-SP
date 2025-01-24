@@ -1,5 +1,5 @@
 <?php
-include "../Scripts/common.php";
+include '../db_connection.php';
 
 // Check if form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,13 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Successful login
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = $user['role']; // Store user role in session
+        $_SESSION['roles'] = $user['roles']; // Store user role in session
 
         // Redirect based on user role
-        if ($user['role'] === 'customer') {
+        if ($user['roles'] === 'customer') {
             header("Location: ../Home.php");
-        } elseif ($user['role'] === 'vendor') {
-            header("Location: ../VendorDashboard.php");
+        } elseif ($user['roles'] === 'vendor') {
+            header("Location: ../Vendor/SalesMetrics.php");
         }
         exit;
     } else {
