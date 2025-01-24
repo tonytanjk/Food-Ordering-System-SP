@@ -1,3 +1,6 @@
+<?php include '../Scripts/common.php'; ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -233,7 +236,7 @@
     <div class="side-section">
         <!-- Balance -->
         <div class="balance">
-            Account Balance: $<span id="balance">100.00</span>
+            Account Balance: $<span id="balance"><?php echo number_format($accountBalance, 2); ?></span>
         </div>
         <button id="toggle-btn" class="toggle-btn" onclick="toggleBalance()">Hide Balance</button>
         

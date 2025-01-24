@@ -1,51 +1,5 @@
-<?php
-// Include database connection
-include '../db_connection.php';
-// Get the food court ID from the URL
-$food_court_id = 2; // Replace with dynamic value if needed
+<?php include '../Scripts/common.php'; ?>
 
-// Check if a specific food stall is selected
-$stall_id = isset($_GET['stall_id']) ? $_GET['stall_id'] : null;
-
-// Fetch food stalls if food court is selected
-if ($food_court_id) {
-    $query = "SELECT * FROM food_stalls WHERE food_court_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $food_court_id);
-    $stmt->execute();
-    $stall_result = $stmt->get_result();
-}
-
-// Fetch food items if a food stall is selected
-if ($stall_id) {
-    $query = "SELECT * FROM food_items WHERE stall_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $stall_id);
-    $stmt->execute();
-    $food_result = $stmt->get_result();
-}
-
-if (isset($_SESSION['user_id'])) {
-    $userId = $_SESSION['user_id'];
-
-    // Query to fetch account balance
-    $query = "SELECT account_balance FROM users WHERE user_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($row = $result->fetch_assoc()) {
-        $accountBalance = $row['account_balance'];
-    } else {
-        $accountBalance = 0.00; // Default balance if user is not found
-    }
-} else {
-    // Redirect to login page if not logged in
-    header("Location: ./UserProcess/login.php");
-    exit();
-}
-?>
 
 <!DOCTYPE html>
 <html lang="en">
