@@ -1,21 +1,5 @@
 <?php
-// Start session
-//echo password_hash('testpassword', PASSWORD_DEFAULT);
-session_start();
-
-// Database connection details
-$host = 'localhost';  // Change to your database host
-$dbname = 'projectcsad';  // Change to your database name
-$username = 'root';  // Change to your database username
-$password = '';  // Change to your database password
-
-// Connect to the database
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
-}
+include "../Scripts/common.php";
 
 // Check if form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -33,10 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Successful login
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['username'] = $user['username'];
+        $_SESSION['role'] = $user['role']; // Store user role in session
 
-        // Debugging: Check session data
-
-        header("Location: ../Home.php");
+        // Redirect based on user role
+        if ($user['role'] === 'customer') {
+            header("Location: ../Home.php");
+        } elseif ($user['role'] === 'vendor') {
+            header("Location: ../VendorDashboard.php");
+        }
         exit;
     } else {
         // Invalid credentials
