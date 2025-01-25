@@ -46,37 +46,22 @@ $stallItems = $stmt->get_result();
     </script>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f8f8f8;
-            color: #333;
         }
-
         header {
             background-color: #333;
             color: white;
             padding: 20px;
             text-align: center;
-            position: relative;
         }
-
-        header h1 {
-            margin: 0;
-        }
-
-        header nav {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
-
         header nav a {
             color: white;
-            margin-left: 15px;
+            margin: 0 15px;
             text-decoration: none;
         }
-
         header nav a:hover {
             text-decoration: underline;
         }
@@ -158,6 +143,18 @@ $stallItems = $stmt->get_result();
         .edit-form button:hover, .add-form button:hover {
             background-color: #555;
         }
+                footer {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
     </style>
     <script>
         function showEditForm(itemId, foodName, description, price) {
@@ -177,7 +174,7 @@ $stallItems = $stmt->get_result();
     <header>
         <h1>Vendor Home</h1>
         <nav>
-            <a href="revenue_metrics.php">Revenue Metrics</a>
+            <a href="manage_orders.php">Manage Orders</a>
             <a href="sales_metrics.php">Sales Metrics</a>
             <a href="top_sales.php">Top Sales</a>
             <a href="../UserProcess/login.php">Logout</a>
@@ -256,8 +253,9 @@ $stallItems = $stmt->get_result();
         </div>
     </div>
 
-    <footer>
-        <p>&copy; <?= date("Y") ?> Food Ordering System. All Rights Reserved.</p>
-    </footer>
+<footer>
+    <p>&copy; 2025 I'm going nuts</p>
+    <p><a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
+</footer>
 </body>
 </html>

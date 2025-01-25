@@ -82,12 +82,13 @@ if (isset($_SESSION['user_id'])) {
 
         .card-container {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             margin: 20px;
             flex-wrap: wrap;
         }
 
         .card {
+            flex: 0 0 25%;
             background-color: white;
             width: 280px;
             margin: 10px;
@@ -250,11 +251,10 @@ if (isset($_SESSION['user_id'])) {
     <h1>Food Ordering System @ SP</h1>
     <nav>
         <a href="./Home.php">Home</a>
-        <a href="./FoodCourts/FC.php">Food Courts</a>
-        <a href="#">Most Ordered</a>
-        <a href="#">About Us</a>
-        <a href="#">Contact</a>
-        <a href="./UserProcess/login.php">Logout</a>
+        <a href="Most_Order.php">Most Ordered</a>
+        <a href="UserProcess/About.html">About Us</a>
+        <a href="UserProcess/Contact.html">Contact</a>
+        <a href="UserProcess/login.php">Logout</a>
     </nav>
     </header>
 
@@ -269,19 +269,37 @@ if (isset($_SESSION['user_id'])) {
             <img src="./assets/fc1.jpg" alt="Food Court 1">
             <h3>Food Court 1</h3>
             <p>Explore a variety of delicious meals.</p>
-            <a href="./FoodCourts/FC1.php">Visit</a>
+            <a href="./FoodCourts/FC.php?food_court_id=1">Visit</a>
         </div>
         <div class="card">
             <img src="./assets/fc2.jpg" alt="Food Court 2">
             <h3>Food Court 2</h3>
             <p>Discover your favorite food options.</p>
-            <a href="./FoodCourts/FC2.php">Visit</a>
+            <a href="./FoodCourts/FC.php?food_court_id=2">Visit</a>
         </div>
         <div class="card">
             <img src="./assets/fc3.jpg" alt="Food Court 3">
             <h3>Food Court 3</h3>
             <p>Enjoy tasty treats and quick bites.</p>
-            <a href="./FoodCourts/FC3.php">Visit</a>
+            <a href="./FoodCourts/FC.php?food_court_id=3">Visit</a>
+        </div>
+            <div class="card">
+            <img src="./assets/fc4.jpg" alt="Food Court 3">
+            <h3>Food Court 4</h3>
+            <p>Enjoy tasty treats and quick bites.</p>
+            <a href="./FoodCourts/FC.php?food_court_id=4">Visit</a>
+        </div>
+            <div class="card">
+            <img src="./assets/fc5.jpg" alt="Food Court 3">
+            <h3>Food Court 5</h3>
+            <p>Enjoy tasty treats and quick bites.</p>
+            <a href="./FoodCourts/FC.php?food_court_id=5">Visit</a>
+        </div>
+            <div class="card">
+            <img src="./assets/fc6.jpg" alt="Food Court 3">
+            <h3>Food Court 6</h3>
+            <p>Enjoy tasty treats and quick bites.</p>
+            <a href="./FoodCourts/FC.php?food_court_id=6">Visit</a>
         </div>
     </div>
 </section>
@@ -309,30 +327,6 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </div>
 </section>
-
-<section>
-    <h2 class="section-title">Special Offers</h2>
-    <div class="card-container">
-        <div class="card">
-            <img src="./assets/offer1.jpg" alt="Special Offer 1">
-            <h3>Buy 1 Get 1 Free</h3>
-            <p>Enjoy a great offer at our food court.</p>
-            <a href="#">Grab the Offer</a>
-        </div>
-        <div class="card">
-            <img src="./assets/offer2.jpg" alt="Special Offer 2">
-            <h3>20% Off on Your First Order</h3>
-            <p>Sign up now and enjoy the discount!</p>
-            <a href="#">Claim Now</a>
-        </div>
-        <div class="card">
-            <img src="./assets/offer3.jpg" alt="Special Offer 3">
-            <h3>Free Drink with Every Meal</h3>
-            <p>Get a free drink with any meal at select food courts.</p>
-            <a href="#">Check It Out</a>
-        </div>
-    </div>
-</section>
         <div class="side-section">
         <!-- Balance -->
         <div class="balance">
@@ -345,9 +339,9 @@ if (isset($_SESSION['user_id'])) {
             <button class="profile-btn">👤 Profile</button>
             <div class="dropdown-content">
                 <a href="./UserProcess/profile.php">Main Profile</a>
-                <a href="account.php">Account Details</a>
+                <a href="Top_up.php">Top up</a>
                 <a href="settings.php">Settings</a>
-                <a href="orders.php">Orders</a>
+                <a href="UserProcess/orders.php">Orders</a>
             </div>
         </div>
     </div>

@@ -1,239 +1,98 @@
 <?php include '../Scripts/common.php'; ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food Courts</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f8f8;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        header nav a {
-            color: white;
-            margin: 0 15px;
-            text-decoration: none;
-        }
-        header nav a:hover {
-            text-decoration: underline;
-        }
-        .hero {
-            background-image: url(../assets/fc.jpeg);
-            height: 300px;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            font-size: 36px;
-            font-weight: bold;
-        }
-        .section-title {
-            text-align: center;
-            font-size: 28px;
-            margin-top: 40px;
-            color: #333;
-        }
-        .food-courts {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px;
-            flex-wrap: wrap;
-        }
-        .food-court {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 10px;
-            width: 250px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .food-court a {
-            width: auto;
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            margin-top: 10px;
-        }
-
-        .food-court a:hover {
-            background-color: #45a049;
-        }
-
-        footer {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        footer a {
-            color: white;
-            margin: 0 10px;
-            text-decoration: none;
-        }
-
-        /* Side Section (Initially hidden) */
-        .side-section {
-            position: fixed;
-            top: 20px;
-            right: -250px;
-            width: 250px;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            transition: right 0.3s ease-in-out;
-        }
-
-        /* Only slides out when hovering over the side section */
-        .side-section:hover {
-            right: 20px;
-        }
-
-        .balance {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .toggle-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 8px 16px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-        }
-        .toggle-btn:hover {
-            background-color: #45a049;
-        }
-
-        .profile-dropdown {
-            position: relative;
-            display: inline-block;
-            margin-top: 15px;
-            width: 100%;
-        }
-        .profile-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 16px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            text-align: left;
-        }
-        .profile-btn:hover {
-            background-color: #0056b3;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: #f9f9f9;
-            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
-            z-index: 1;
-            width: 100%;
-            border-radius: 5px;
-        }
-        .dropdown-content a {
-            display: block;
-            color: #333;
-            padding: 10px 16px;
-            text-decoration: none;
-            border-bottom: 1px solid #ddd;
-        }
-        .dropdown-content a:hover {
-            background-color: #f1f1f1;
-        }
-        .profile-dropdown:hover .dropdown-content {
-            display: block;
-        }
-    </style>
-    <script>
-        // Toggle the balance visibility
-        function toggleBalance() {
-            const balance = document.getElementById("balance");
-            const toggleBtn = document.getElementById("toggle-btn");
-            if (balance.style.display === "none") {
-                balance.style.display = "inline";
-                toggleBtn.textContent = "Hide Balance";
-            } else {
-                balance.style.display = "none";
-                toggleBtn.textContent = "Show Balance";
-            }
-        }
-    </script>
+    <title>Food Court Vendors</title>
+    <link rel="stylesheet" href="../Scripts/FC1_6_CSS.css">
+    <script src="../Scripts/FC1_6_JS.js"></script>
 </head>
 <body>
-
     <header>
-        <h1>Food Courts @ SP</h1>
+        <h1 style="color: white">Food Ordering System @ SP</h1>
         <nav>
         <a href="../Home.php">Home</a>
-        <a href="FC.php">Food Courts</a>
         <a href="../Most_Order.php">Most Ordered</a>
-        <a href="#">About Us</a>
-        <a href="#">Contact</a>
+        <a href="../UserProcess/About.html">About Us</a>
+        <a href="../UserProcess/Contact.html">Contact</a>
         <a href="../UserProcess/login.php">Logout</a>
-        </nav>
+        </nav>        
+        <?php if (!empty($_SESSION['cart'])): ?>
+            <div class="cart-summary">
+                <h2>Your Cart</h2>
+                <div class="cart-items">
+                    <?php foreach ($_SESSION['cart'] as $item_id => $item): ?>
+                        <div class="cart-item">
+                            <div class="item-details">
+                                <span class="item-name"><?= htmlspecialchars($item['name']) ?></span>
+                                <span class="item-price">$<?= number_format($item['price'], 2) ?></span>
+                            </div>
+                            <div class="item-quantity">
+                                <span class="quantity-label">Quantity:</span> <?= $item['quantity'] ?>
+                            </div>
+                            <div class="item-total">
+                                <strong>Total: $<?= number_format($item['price'] * $item['quantity'], 2) ?></strong>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <div class="cart-total">
+                    <p><strong>Total Price:</strong> $<?= number_format(array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $_SESSION['cart'])), 2) ?></p>
+                </div>
+                <a href="../Payment/cart.php" class="checkout-btn">Proceed to Checkout</a>
+            </div>
+        <?php else: ?>
+            <p>Your cart is empty.</p>
+        <?php endif; ?>
     </header>
+    <div class="container">
+        <h1>Food Court Vendors</h1>
 
-    <div class="hero">
-        <p>Explore Our Food Courts</p>
+        <?php if (!$stall_id && $food_court_id): ?>
+            <!-- Display food stalls for the selected food court -->
+            <h2>Food Stalls in Food Court #<?= htmlspecialchars($food_court_id) ?></h2>
+            <div class="vendor-grid">
+                <?php while ($stall = $stall_result->fetch_assoc()): 
+                    $stall_picture = !empty($stall['stall_picture']) ? $stall['stall_picture'] : 'images/placeholder.jpg'; // Fallback to placeholder
+                ?>
+                    <a href="FC.php?vendor_id=<?= $food_court_id ?>&stall_id=<?= $stall['stall_id'] ?>" class="vendor-card">
+                        <img src="<?= htmlspecialchars($stall_picture) ?>" alt="<?= htmlspecialchars($stall['stall_name']) ?>">
+                        <div class="vendor-details">
+                            <h2><?= htmlspecialchars($stall['stall_name']) ?></h2>
+                            <p>Click to view food selection.</p>
+                        </div>
+                    </a>
+                <?php endwhile; ?>
+            </div>
+        <?php elseif ($stall_id): ?>
+            <!-- Display food items for the selected food stall -->
+            <h2>Food Menu</h2>
+    <div class="food-items-grid">
+        <?php 
+        // Loop through food items for the selected food stall
+        while ($food_item = $food_result->fetch_assoc()):?>
+            <div class="food-item-card">
+                <div class="food-item-details">
+                    <h2><?= htmlspecialchars($food_item['food_name']) ?></h2>
+                    <p><?= htmlspecialchars($food_item['description']) ?></p>
+                    <p class="price">Price: $<?= number_format($food_item['price'], 2) ?></p>                    
+                    <!-- Add to Cart Form -->
+                    <form action="../Payment/addcart.php" method="POST">
+                        <input type="hidden" name="food_item_id" value="<?= $food_item['food_item_id'] ?>">
+                        <input type="hidden" name="stall_id" value="<?= $stall_id ?>">
+                        <label for="quantity-<?= $food_item['food_item_id'] ?>">Quantity:</label>
+                        <input type="number" id="quantity-<?= $food_item['food_item_id'] ?>" name="quantity" value="1" min="1" max="100" required>
+                        <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        <?php endwhile; ?>
     </div>
-
-    <section class="food-courts">
-        <h2 class="section-title">Food Courts</h2>
-        <div class="food-court">
-            <a href="FC1.php?food_court_id=1">Foodcourt 1</a>
-        </div>
-        <div class="food-court">
-            <a href="FC2.php?food_court_id=2">Foodcourt 2</a>
-        </div>
-        <div class="food-court">
-            <a href="FC3.php?food_court_id=3">Foodcourt 3</a>
-        </div>
-        <div class="food-court">
-            <a href="FC4.php?food_court_id=4">Foodcourt 4</a>
-        </div>
-        <div class="food-court">
-            <a href="FC5.php?food_court_id=5">Bang Deli @ Foodcourt 5</a>
-        </div>
-        <div class="food-court">
-            <a href="FC6.php?food_court_id=6">Foodcourt 6</a>
-        </div>
-    </section>
-
-    <!-- Side Section (Initially hidden) -->
-    <div class="side-section">
+<?php endif; ?>
+    </div>
+            <div class="side-section">
         <!-- Balance -->
         <div class="balance">
             Account Balance: $<span id="balance"><?php echo number_format($accountBalance, 2); ?></span>
@@ -251,11 +110,5 @@
             </div>
         </div>
     </div>
-
-    <footer>
-        <p>&copy; 2025 Food Courts</p>
-        <p><a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
-    </footer>
-
 </body>
 </html>

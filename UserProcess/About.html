@@ -4,13 +4,27 @@
         <title>About Us</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
+        <link rel="stylesheet" href="../Scripts/FC1_6_CSS.css">
         <style>
             body {
                 font-family: Arial, sans-serif;
-                margin: 0px;
-                padding: 0px;
+                margin: 0;
+                padding: 0;
                 background-color: #f8f8f8;
+            }
+            header {
+                background-color: #333;
+                color: white;
+                padding: 20px;
+                text-align: center;
+            }
+            header nav a {
+                color: white;
+                margin: 0 15px;
+                text-decoration: none;
+            }
+            header nav a:hover {
+                text-decoration: underline;
             }
             
             .heading {
@@ -153,6 +167,17 @@
     </head>
     
     <body>
+        
+    <header>
+    <h1 style="color: white">Food Ordering System @ SP</h1>
+    <nav>
+        <a href="../Home.php">Home</a>
+        <a href="../Most_Order.php">Most Ordered</a>
+        <a href="About.html">About Us</a>
+        <a href="Contact.html">Contact</a>
+        <a href="login.php">Logout</a>
+    </nav>
+    </header>
         <div class="heading">
             <h1>About Us</h1>
             <p>This is where the description goes. Add meaningful content here.</p>
@@ -170,5 +195,9 @@
                 </div>
             </section>
         </div>
+    <footer>
+        <p>&copy; 2025 Food Courts</p>
+        <p><a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
+    </footer>
     </body>
 </html>

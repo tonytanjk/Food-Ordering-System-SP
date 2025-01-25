@@ -10,3 +10,4 @@
                 toggleBtn.textContent = "Show Balance";
             }
         }
+        

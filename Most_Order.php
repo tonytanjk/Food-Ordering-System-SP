@@ -1,8 +1,35 @@
+<?php
+
+// Include database connection
+include_once 'db_connection.php';
+
+// Get user ID from session
+$userId = $_SESSION['user_id'];
+// Fetch user account balance
+function getAccountBalance($userId, $conn) {
+    $query = "SELECT account_balance FROM users WHERE user_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        return $row['account_balance'];
+    }
+    return 0.00; // Default balance if not found
+}
+
+$accountBalance = getAccountBalance($userId, $conn);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="Scripts/FC1_6_JS.js"></script>
+    <link rel="stylesheet" href="Scripts/FC1_6_CSS.css">
     <title>Most Ordered Foods</title>
     <style>
         body {
@@ -86,13 +113,12 @@
 <body>
 
     <header>
-        <h1>Most Ordered Foods</h1>
+        <h1 style="color: white">Most Ordered Foods</h1>
         <nav>
         <a href="./Home.php">Home</a>
-        <a href="./FoodCourts/FC.php">Food Courts</a>
-        <a href="#">Most Ordered</a>
-        <a href="#">About Us</a>
-        <a href="#">Contact</a>
+        <a href="Most_Order.php">Most Ordered</a>
+        <a href="UserProcess/About.html">About Us</a>
+        <a href="UserProcess/Contact.html">Contact</a>
         <a href="./UserProcess/login.php">Logout</a>
         </nav>
     </header>
@@ -118,8 +144,31 @@
         <div class="food-item">
             <button style="background-image: url('fooditem5-image.jpg');" onclick="window.location.href='#';">Food Item 5</button>
         </div>
+        
     </section>
-
+    
+    
+        <div class="side-section">
+        <!-- Balance -->
+        <div class="balance">
+            Account Balance: $<span id="balance"><?php echo number_format($accountBalance, 2); ?></span>
+        </div>
+        <button id="toggle-btn" class="toggle-btn" onclick="toggleBalance()">Hide Balance</button>
+        
+        <!-- Profile Dropdown -->
+        <div class="profile-dropdown">
+            <button class="profile-btn">👤 Profile</button>
+            <div class="dropdown-content">
+                <a href="./UserProcess/profile.php">Main Profile</a>
+                <a href="Top_up.php">Top up</a>
+                <a href="settings.php">Settings</a>
+                <a href="orders.php">Orders</a>
+            </div>
+        </div>
+    </div>    
+    
+    
+    
     <footer>
         <p>&copy; 2025 Food Courts</p>
         <p><a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>

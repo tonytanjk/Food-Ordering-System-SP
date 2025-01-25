@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Redirect back to the previous page or display a success message
-            header("Location: ../FoodCourts/FC1.php?stall_id=" . $food_item['stall_id']);
+            header("Location: ../FoodCourts/FC.php?stall_id=" . $food_item['stall_id']);
             exit();
         } else {
             echo "Food item not found.";

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 25, 2025 at 01:41 PM
+-- Generation Time: Jan 25, 2025 at 05:40 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -63,6 +63,15 @@ CREATE TABLE `food_items` (
   `image_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `food_items`
+--
+
+INSERT INTO `food_items` (`food_item_id`, `food_name`, `description`, `price`, `category`, `stall_id`, `image_path`) VALUES
+(7, 'Steamed Chicken Rice', '', 1.50, NULL, 1, NULL),
+(9, 'Nasi Padang', NULL, 2.50, NULL, 5, NULL),
+(10, 'Roasted Chicken Rice', '', 2.50, NULL, 1, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -86,7 +95,8 @@ CREATE TABLE `food_stalls` (
 --
 
 INSERT INTO `food_stalls` (`stall_id`, `stall_name`, `food_court_id`, `contact_number`, `availability`, `opening_time`, `closing_time`, `description`, `stall_picture`) VALUES
-(1, 'Chicken Rice', 1, NULL, 'Open', '11:00:00', '17:00:00', NULL, '../assets/hainanese-chicken-rice.jpg');
+(1, 'Chicken Rice', 1, NULL, 'Open', '11:00:00', '17:00:00', NULL, '../assets/hainanese-chicken-rice.jpg'),
+(5, 'Nasi Padang', 2, NULL, 'Open', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -114,8 +124,16 @@ CREATE TABLE `orders` (
   `total_amount` decimal(10,2) NOT NULL,
   `status` enum('Pending','Completed','Cancelled') DEFAULT 'Pending',
   `payment_method` varchar(50) NOT NULL,
-  `order_date` datetime DEFAULT current_timestamp()
+  `order_date` datetime DEFAULT current_timestamp(),
+  `tracking_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`order_id`, `user_id`, `total_amount`, `status`, `payment_method`, `order_date`, `tracking_id`) VALUES
+(8, 1, 1.50, 'Completed', 'Credit Card', '2025-01-26 00:21:25', 'ORDER_67950F85D651E');
 
 -- --------------------------------------------------------
 
@@ -130,6 +148,13 @@ CREATE TABLE `order_items` (
   `quantity` int(11) NOT NULL,
   `price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order_items`
+--
+
+INSERT INTO `order_items` (`order_item_id`, `order_id`, `food_item_id`, `quantity`, `price`) VALUES
+(7, 8, 7, 1, 1.50);
 
 -- --------------------------------------------------------
 
@@ -156,7 +181,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `phone`, `profile_picture`, `account_balance`, `roles`, `stall_id`, `food_court_id`) VALUES
 (1, 'test', 'test@example.com', '$2y$10$0UDqRcrXtf6UUuE/ZU9/me94orx4iNwFPZTFyid.yAam06HP7G46S', '12345', '../uploads/profile_pic.jpg', 0.00, 'customer', NULL, NULL),
-(2, 'test2', '', '$2y$10$0UDqRcrXtf6UUuE/ZU9/me94orx4iNwFPZTFyid.yAam06HP7G46S', NULL, NULL, NULL, 'vendor', 1, 1);
+(2, 'test2', '', '$2y$10$0UDqRcrXtf6UUuE/ZU9/me94orx4iNwFPZTFyid.yAam06HP7G46S', NULL, NULL, NULL, 'vendor', 1, 1),
+(5, 'test3', 'aa', '$2y$10$0UDqRcrXtf6UUuE/ZU9/me94orx4iNwFPZTFyid.yAam06HP7G46S', NULL, NULL, 0.00, 'customer', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -229,13 +255,13 @@ ALTER TABLE `food_courts`
 -- AUTO_INCREMENT for table `food_items`
 --
 ALTER TABLE `food_items`
-  MODIFY `food_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `food_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `food_stalls`
 --
 ALTER TABLE `food_stalls`
-  MODIFY `stall_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `stall_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `most_ordered`
@@ -247,19 +273,19 @@ ALTER TABLE `most_ordered`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables

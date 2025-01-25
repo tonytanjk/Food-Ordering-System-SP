@@ -221,7 +221,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Food Ordering System @ SP</h1>
     <nav>
         <a href="../Home.php">Home</a>
-        <a href="../FoodCourts/FC.php">Food Courts</a>
         <a href="../Most_Order.php">Most Ordered</a>
         <a href="#">About Us</a>
         <a href="#">Contact</a>
