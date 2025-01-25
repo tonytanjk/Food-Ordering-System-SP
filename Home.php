@@ -269,19 +269,19 @@ if (isset($_SESSION['user_id'])) {
             <img src="./assets/fc1.jpg" alt="Food Court 1">
             <h3>Food Court 1</h3>
             <p>Explore a variety of delicious meals.</p>
-            <a href="FoodCourts/FC1.php">Visit</a>
+            <a href="./FoodCourts/FC1.php">Visit</a>
         </div>
         <div class="card">
             <img src="./assets/fc2.jpg" alt="Food Court 2">
             <h3>Food Court 2</h3>
             <p>Discover your favorite food options.</p>
-            <a href="FoodCourts/FC2.php">Visit</a>
+            <a href="./FoodCourts/FC2.php">Visit</a>
         </div>
         <div class="card">
             <img src="./assets/fc3.jpg" alt="Food Court 3">
             <h3>Food Court 3</h3>
             <p>Enjoy tasty treats and quick bites.</p>
-            <a href="FoodCourts/FC3.php">Visit</a>
+            <a href="./FoodCourts/FC3.php">Visit</a>
         </div>
     </div>
 </section>

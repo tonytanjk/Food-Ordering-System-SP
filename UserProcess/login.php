@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user['roles'] === 'customer') {
             header("Location: ../Home.php");
         } elseif ($user['roles'] === 'vendor') {
-            header("Location: ../Vendor/SalesMetrics.php");
+            header("Location: ../Vendor/vendor_home.php");
         }
         exit;
     } else {

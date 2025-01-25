@@ -37,6 +37,13 @@ $stallItems = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vendor Home</title>
+    <script>
+        function deleteItem() {
+            var form = document.getElementById('itemForm');
+            form.action = 'delete_item.php';
+            form.submit();
+        }
+    </script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -170,10 +177,10 @@ $stallItems = $stmt->get_result();
     <header>
         <h1>Vendor Home</h1>
         <nav>
-            <a href="../UserProcess/logout.php">Logout</a>
+            <a href="revenue_metrics.php">Revenue Metrics</a>
             <a href="sales_metrics.php">Sales Metrics</a>
             <a href="top_sales.php">Top Sales</a>
-            <a href="revenue_metrics.php">Revenue Metrics</a>
+            <a href="../UserProcess/login.php">Logout</a>
         </nav>
     </header>
 
@@ -220,7 +227,8 @@ $stallItems = $stmt->get_result();
 
         <div id="edit-form" class="edit-form">
             <h2>Edit Item</h2>
-            <form action="update_item.php" method="post">
+            <form id="itemForm" action="update_item.php" method="post">
+                <input type="hidden" id="stall_id" name="stall_id" value="<?= $stall_id ?>">
                 <input type="hidden" id="item_id" name="item_id">
                 <label for="food_name">Food Name:</label>
                 <input type="text" id="food_name" name="food_name" required>
@@ -229,6 +237,7 @@ $stallItems = $stmt->get_result();
                 <label for="price">Price:</label>
                 <input type="number" id="price" name="price" step="0.01" required>
                 <button type="submit">Update Item</button>
+                <button type="submit" onclick="deleteItem()">Delete item</button>
             </form>
         </div>
 

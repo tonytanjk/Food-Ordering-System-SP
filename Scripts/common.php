@@ -115,6 +115,8 @@ function getTopSellingItems($conn, $foodCourtId, $stallId, $limit = 10) {
     $stmt->execute();
     return $stmt->get_result();
 }
+
+
 // Example usage for sales metrics (For Vendor)
 $accountBalance = getAccountBalance($userId, $conn);
 $totalSales = getTotalSales($conn);
