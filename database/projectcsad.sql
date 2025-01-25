@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 24, 2025 at 09:54 PM
+-- Generation Time: Jan 25, 2025 at 01:41 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -62,14 +62,6 @@ CREATE TABLE `food_items` (
   `stall_id` int(11) NOT NULL,
   `image_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `food_items`
---
-
-INSERT INTO `food_items` (`food_item_id`, `food_name`, `description`, `price`, `category`, `stall_id`, `image_path`) VALUES
-(1, 'Steamed Chicken Rice', NULL, 2.50, NULL, 1, '../assets/Steamed_Chicken_Rice.jpg'),
-(3, 'Roasted Chicken Rice', '', 3.50, NULL, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -237,7 +229,7 @@ ALTER TABLE `food_courts`
 -- AUTO_INCREMENT for table `food_items`
 --
 ALTER TABLE `food_items`
-  MODIFY `food_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `food_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `food_stalls`
