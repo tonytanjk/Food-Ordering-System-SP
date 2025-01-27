@@ -1,7 +1,8 @@
 <?php
 
-// Include common.php for database connection and common functions
-include '../scripts/common.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
+echo $account,$main_head;
 
 // Fetch orders from the database for the logged-in user
 $user_id = $_SESSION['user_id']; // Assuming user ID is stored in session
@@ -192,18 +193,6 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
     </script>
 </head>
 <body>
-
-<header>
-    <h1>Food Ordering System @ SP</h1>
-    <nav>
-        <a href="../Home.php">Home</a>
-        <a href="../FoodCourts/FC.php">Food Courts</a>
-        <a href="../Most_Order.php">Most Ordered</a>
-        <a href="#">About Us</a>
-        <a href="#">Contact</a>
-        <a href="Client/login.php">Logout</a>
-    </nav>
-</header>
 
 <div class="container">
     <div class="order-header">
