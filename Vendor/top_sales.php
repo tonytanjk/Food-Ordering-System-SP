@@ -102,7 +102,7 @@ $topSellingItems = getTopSellingItems($conn, $food_court_id, $stall_id);
         <nav>
             <a href='../Vendor/vendor_home.php'>Home</a>
             <a href="sales_metrics.php">Sales Metrics</a>
-            <a href="top_sales.php">Top Sales</a>
+            <a href="manage_orders.php">Manage Orders</a>
             <a href="../UserProcess/logout.php">Logout</a>
         </nav>
     </header>

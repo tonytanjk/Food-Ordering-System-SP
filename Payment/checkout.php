@@ -1,7 +1,5 @@
 <?php
-session_start();
-$pdo = new PDO("mysql:host=localhost;dbname=projectcsad", 'root', '');
-
+include '../Scripts/common.php';
 // Generate a tracking ID
 function generateTrackingID() {
     return strtoupper(uniqid('ORDER_'));

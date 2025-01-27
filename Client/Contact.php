@@ -1,3 +1,8 @@
+<?php 
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -171,16 +176,6 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1 style="color: white">Food Ordering System @ SP</h1>
-        <nav>
-            <a href="../Home.php">Home</a>
-            <a href="../Most_Order.php">Most Ordered</a>
-            <a href="About.html">About Us</a>
-            <a href="Contact.html">Contact</a>
-            <a href="login.php">Logout</a>
-        </nav>
-    </header>
     <section class="contact">
         <div class="content">
             <h2>Contact Us</h2>

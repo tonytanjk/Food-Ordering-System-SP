@@ -175,9 +175,9 @@ $stallItems = $stmt->get_result();
         <h1>Vendor Home</h1>
         <nav>
             <a href="manage_orders.php">Manage Orders</a>
-            <a href="sales_metrics.php">Sales Metrics</a>
+            <a href="SalesMetrics.php">Sales Metrics</a>
             <a href="top_sales.php">Top Sales</a>
-            <a href="../UserProcess/login.php">Logout</a>
+            <a href="../Client/login.php">Logout</a>
         </nav>
     </header>
 

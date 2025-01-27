@@ -1,7 +1,7 @@
 <?php
 
 // Include the database connection
-include '../db_connection.php';
+include '../Scripts/common.php';
 
 // Check if the form was submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

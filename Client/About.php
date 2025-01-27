@@ -1,3 +1,8 @@
+<?php 
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
+?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -167,17 +172,7 @@
     </head>
     
     <body>
-        
-    <header>
-    <h1 style="color: white">Food Ordering System @ SP</h1>
-    <nav>
-        <a href="../Home.php">Home</a>
-        <a href="../Most_Order.php">Most Ordered</a>
-        <a href="About.html">About Us</a>
-        <a href="Contact.html">Contact</a>
-        <a href="login.php">Logout</a>
-    </nav>
-    </header>
+       
         <div class="heading">
             <h1>About Us</h1>
             <p>This is where the description goes. Add meaningful content here.</p>
@@ -191,7 +186,7 @@
                 <div class="about-content">
                     <h2>Our Mission</h2>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Cras convallis vehicula orci, sed ultricies ligula bibendum nec.</p>
-                    <a href="LM.html" class="read_more">Read More</a>
+                    <a href="LM.php" class="read_more">Read More</a>
                 </div>
             </section>
         </div>

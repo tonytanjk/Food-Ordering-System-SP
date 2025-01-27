@@ -1,4 +1,8 @@
-<?php include '../Scripts/common.php'; ?>
+<?php 
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
+echo $account,$main_head;
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,15 +14,7 @@
     <script src="../Scripts/FC1_6_JS.js"></script>
 </head>
 <body>
-    <header>
-        <h1 style="color: white">Food Ordering System @ SP</h1>
-        <nav>
-        <a href="../Home.php">Home</a>
-        <a href="../Most_Order.php">Most Ordered</a>
-        <a href="../UserProcess/About.html">About Us</a>
-        <a href="../UserProcess/Contact.html">Contact</a>
-        <a href="../UserProcess/login.php">Logout</a>
-        </nav>        
+    <header>      
         <?php if (!empty($_SESSION['cart'])): ?>
             <div class="cart-summary">
                 <h2>Your Cart</h2>
@@ -55,7 +51,7 @@
             <h2>Food Stalls in Food Court #<?= htmlspecialchars($food_court_id) ?></h2>
             <div class="vendor-grid">
                 <?php while ($stall = $stall_result->fetch_assoc()): 
-                    $stall_picture = !empty($stall['stall_picture']) ? $stall['stall_picture'] : 'images/placeholder.jpg'; // Fallback to placeholder
+                    $stall_picture = !empty($stall['stall_picture']) ? $stall['stall_picture'] : 'uploads/Steamed_Chicken_rice.jpg'; // Fallback to placeholder
                 ?>
                     <a href="FC.php?vendor_id=<?= $food_court_id ?>&stall_id=<?= $stall['stall_id'] ?>" class="vendor-card">
                         <img src="<?= htmlspecialchars($stall_picture) ?>" alt="<?= htmlspecialchars($stall['stall_name']) ?>">
@@ -91,24 +87,6 @@
         <?php endwhile; ?>
     </div>
 <?php endif; ?>
-    </div>
-            <div class="side-section">
-        <!-- Balance -->
-        <div class="balance">
-            Account Balance: $<span id="balance"><?php echo number_format($accountBalance, 2); ?></span>
-        </div>
-        <button id="toggle-btn" class="toggle-btn" onclick="toggleBalance()">Hide Balance</button>
-        
-        <!-- Profile Dropdown -->
-        <div class="profile-dropdown">
-            <button class="profile-btn">👤 Profile</button>
-            <div class="dropdown-content">
-                <a href="../UserProcess/profile.php">Main Profile</a>
-                <a href="account.php">Account Details</a>
-                <a href="settings.php">Settings</a>
-                <a href="orders.php">Orders</a>
-            </div>
-        </div>
     </div>
 </body>
 </html>

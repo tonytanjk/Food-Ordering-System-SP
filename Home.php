@@ -1,28 +1,8 @@
 <?php
 // Include database connection file
-include 'db_connection.php'; // Make sure this file contains your database connection logic
-
-// Fetch the user's account balance from the database
-if (isset($_SESSION['user_id'])) {
-    $userId = $_SESSION['user_id'];
-
-    // Query to fetch account balance
-    $query = "SELECT account_balance FROM users WHERE user_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($row = $result->fetch_assoc()) {
-        $accountBalance = $row['account_balance'];
-    } else {
-        $accountBalance = 0.00; // Default balance if user is not found
-    }
-} else {
-    // Redirect to login page if not logged in
-    header("Location: ./UserProcess/login.php");
-    exit();
-}
+include 'Scripts/common.php';
+include 'Scripts/Account.php';
+echo $account,$main_head;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -230,33 +210,8 @@ if (isset($_SESSION['user_id'])) {
             text-decoration: none;
         }
     </style>
-        <script>
-        // Toggle the balance visibility
-        function toggleBalance() {
-            const balance = document.getElementById("balance");
-            const toggleBtn = document.getElementById("toggle-btn");
-            if (balance.style.display === "none") {
-                balance.style.display = "inline";
-                toggleBtn.textContent = "Hide Balance";
-            } else {
-                balance.style.display = "none";
-                toggleBtn.textContent = "Show Balance";
-            }
-        }
-    </script>
 </head>
 <body>
-
-    <header>
-    <h1>Food Ordering System @ SP</h1>
-    <nav>
-        <a href="./Home.php">Home</a>
-        <a href="Most_Order.php">Most Ordered</a>
-        <a href="UserProcess/About.html">About Us</a>
-        <a href="UserProcess/Contact.html">Contact</a>
-        <a href="UserProcess/login.php">Logout</a>
-    </nav>
-    </header>
 
 <div class="hero">
     <h1>Welcome to Our Food Ordering System</h1>
@@ -327,24 +282,6 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </div>
 </section>
-        <div class="side-section">
-        <!-- Balance -->
-        <div class="balance">
-            Account Balance: $<span id="balance"><?php echo number_format($accountBalance, 2); ?></span>
-        </div>
-        <button id="toggle-btn" class="toggle-btn" onclick="toggleBalance()">Hide Balance</button>
-        
-        <!-- Profile Dropdown -->
-        <div class="profile-dropdown">
-            <button class="profile-btn">👤 Profile</button>
-            <div class="dropdown-content">
-                <a href="./UserProcess/profile.php">Main Profile</a>
-                <a href="Top_up.php">Top up</a>
-                <a href="settings.php">Settings</a>
-                <a href="UserProcess/orders.php">Orders</a>
-            </div>
-        </div>
-    </div>
 
 <footer>
     <p>&copy; 2025 I'm going nuts</p>

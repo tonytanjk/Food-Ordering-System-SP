@@ -1,5 +1,5 @@
 <?php
-include '../db_connection.php';
+include '../Scripts/db_backup.php';
 
 // Check if form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -18,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['roles'] = $user['roles']; // Store user role in session
-
         // Redirect based on user role
         if ($user['roles'] === 'customer') {
             header("Location: ../Home.php");
@@ -31,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Invalid username or password.";
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html>

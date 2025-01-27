@@ -38,6 +38,7 @@ if (isset($_POST['close_order'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../Scripts/FC1_6_CSS.css">
     <title>Vendor Orders</title>
     <style>
         body {
@@ -97,6 +98,15 @@ if (isset($_POST['close_order'])) {
     </style>
 </head>
 <body>
+        <header>
+        <h1 style="color: white">Manage Orders</h1>
+        <nav>
+            <a href="vendor_home.php">Home</a>
+            <a href="SalesMetrics.php">Sales Metrics</a>
+            <a href="top_sales.php">Top Sales</a>
+            <a href="../Client/login.php">Logout</a>
+        </nav>
+        </header>
     <div class="container">
         <h1>Open Orders</h1>
         <table>

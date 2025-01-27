@@ -1,12 +1,5 @@
 <?php
-include '../db_connection.php'; // Include the database connection file
-
-// Ensure the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header('Location: ../UserProcess/login.php');
-    exit();
-}
-
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
 // Retrieve user information from the database
 $user_id = $_SESSION['user_id'];
 
@@ -216,17 +209,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </head>
 <body>
-
-<header>
-    <h1>Food Ordering System @ SP</h1>
-    <nav>
-        <a href="../Home.php">Home</a>
-        <a href="../Most_Order.php">Most Ordered</a>
-        <a href="#">About Us</a>
-        <a href="#">Contact</a>
-        <a href="../UserProcess/login.php">Logout</a>
-    </nav>
-</header>
 
 <div class="container">
     <div class="profile-header">

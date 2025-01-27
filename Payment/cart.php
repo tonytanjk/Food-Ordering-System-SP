@@ -1,7 +1,6 @@
 <?php
 // Include the database connection
-include '../db_connection.php';
-session_start();
+include '../Scripts/common.php';
 
 // Initialize the cart if it doesn't exist
 if (!isset($_SESSION['cart'])) {

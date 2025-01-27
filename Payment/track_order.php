@@ -1,6 +1,5 @@
 <?php
-session_start();
-$pdo = new PDO("mysql:host=localhost;dbname=projectcsad", 'root', '');
+include '../Scripts/common.php';
 
 // Check if the tracking ID is set
 if (!isset($_SESSION['tracking_id'])) {

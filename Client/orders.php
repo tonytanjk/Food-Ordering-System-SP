@@ -1,20 +1,9 @@
 <?php
 // Include database connection and common functions
 include '../scripts/common.php';
-
-// Start the session
-session_start();
-
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    // Redirect to login page if not logged in
-    header('Location: login.php');
-    exit;
-}
-
+include '../Scripts/Account.php';
 // Get the logged-in user's ID
 $user_id = $_SESSION['user_id'];
-
 // Fetch current orders for the logged-in user that are not completed
 $query = "
     SELECT o.order_id, o.total_amount, o.payment_method, o.order_date, oi.food_item_id, oi.quantity, oi.price, fi.food_name
@@ -35,7 +24,7 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../Scripts/FC1_6_CSS.css">
-    <title>Current Orders</title>
+    <title>Current Open Orders</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -80,19 +69,9 @@ $result = $stmt->get_result();
     </style>
 </head>
 <body>
-    <header>
-        <h1>Current Orders</h1>
-        <nav>
-            <a href="../Home.php">Home</a>
-            <a href="../Most_Order.php">Most Ordered</a>
-            <a href="About.html">About Us</a>
-            <a href="Contact.html">Contact</a>
-            <a href="login.php">Logout</a>
-        </nav>
-    </header>
 
     <div class="container">
-        <h2>Current Orders</h2>
+        <h2>Current Open Orders</h2>
         <table>
             <thead>
                 <tr>

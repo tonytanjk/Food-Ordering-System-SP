@@ -1,13 +1,10 @@
 <?php
-// Start the session to access user information
-session_start();
 
 // Include common.php for database connection and common functions
 include '../scripts/common.php';
 
 // Fetch orders from the database for the logged-in user
 $user_id = $_SESSION['user_id']; // Assuming user ID is stored in session
-
 $query = "SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
@@ -204,7 +201,7 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
         <a href="../Most_Order.php">Most Ordered</a>
         <a href="#">About Us</a>
         <a href="#">Contact</a>
-        <a href="../UserProcess/login.php">Logout</a>
+        <a href="Client/login.php">Logout</a>
     </nav>
 </header>
 
