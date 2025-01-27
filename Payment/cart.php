@@ -253,8 +253,8 @@ foreach ($_SESSION['cart'] as $item) {
                 <div class="total-price">
                     Total Price: $<?= number_format($total_price, 2) ?>
                 </div>
-                <form action="checkout.php" method="POST">
-                    <button type="submit" class="checkout-btn" name="checkout">Proceed to Checkout</button>
+                <form action="ProcessPayment.php" method="POST">
+                    <button type="submit" class="checkout-btn" name="checkout">Proceed to Payment</button>
                 </form>
             <?php else: ?>
                 <div class="empty-cart">

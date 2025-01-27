@@ -1,6 +1,7 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
-// Retrieve user information from the database
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
+echo $main_head;
 $user_id = $_SESSION['user_id'];
 
 // Query to fetch user details

@@ -1,8 +1,8 @@
 <?php
 
-// Include database connection
-include_once 'Scripts/common.php';
-include 'Scripts/Account.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
+echo $account,$main_head;
 ?>
 
 <!DOCTYPE html>
@@ -19,20 +19,6 @@ include 'Scripts/Account.php';
             margin: 0;
             padding: 0;
             background-color: #f8f8f8;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        header nav a {
-            color: white;
-            margin: 0 15px;
-            text-decoration: none;
-        }
-        header nav a:hover {
-            text-decoration: underline;
         }
         .hero {
             background-color: #4CAF50;

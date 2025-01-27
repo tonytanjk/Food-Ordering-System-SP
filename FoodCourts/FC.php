@@ -51,8 +51,9 @@ echo $account,$main_head;
             <h2>Food Stalls in Food Court #<?= htmlspecialchars($food_court_id) ?></h2>
             <div class="vendor-grid">
                 <?php while ($stall = $stall_result->fetch_assoc()): 
-                    $stall_picture = !empty($stall['stall_picture']) ? $stall['stall_picture'] : 'uploads/Steamed_Chicken_rice.jpg'; // Fallback to placeholder
-                ?>
+                $stall_picture = !empty($stall['stall_picture']) && file_exists($_SERVER['DOCUMENT_ROOT'] . $stall['stall_picture'])
+                    ? $stall['stall_picture']
+                    : '/ProjectCSAD/uploads/unknown_food.jpg';                ?>
                     <a href="FC.php?vendor_id=<?= $food_court_id ?>&stall_id=<?= $stall['stall_id'] ?>" class="vendor-card">
                         <img src="<?= htmlspecialchars($stall_picture) ?>" alt="<?= htmlspecialchars($stall['stall_name']) ?>">
                         <div class="vendor-details">

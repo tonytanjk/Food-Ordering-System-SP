@@ -1,7 +1,7 @@
 <?php
-// Include database connection and common functions
-include '../scripts/common.php';
-include '../Scripts/Account.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
+echo $account,$main_head;
 // Get the logged-in user's ID
 $user_id = $_SESSION['user_id'];
 // Fetch current orders for the logged-in user that are not completed

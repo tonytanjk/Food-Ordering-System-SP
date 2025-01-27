@@ -14,6 +14,7 @@ $account = <<<HTML
         <button class="profile-btn">👤 Profile</button>
         <div class="dropdown-content">
             <a href="/ProjectCSAD/Client/profile.php">Main Profile</a>
+            <a href="/ProjectCSAD/Payment/Topup.php">Top up</a>
             <a href="/ProjectCSAD/Client/orders.php">Orders</a>
             <a href="/ProjectCSAD/Client/logout.php">Logout</a>
         </div>
@@ -23,24 +24,6 @@ HTML;
         
 // Dynamic content for the main header
 $main_head = <<<HTML
-<style>        
-    header {
-        background-color: #333;
-        color: white;
-        padding: 20px;
-        text-align: center;
-    }
-
-    header nav a {
-        color: white;
-        margin: 0 15px;
-        text-decoration: none;
-    }
-
-    header nav a:hover {
-        text-decoration: underline;
-    }
-</style>
 <!--//Header for Most pages-->
 <header>
     <h1 style="color:white">Food Ordering System @ SP</h1>
