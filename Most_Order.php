@@ -1,8 +1,18 @@
+<?php
+
+// Include database connection
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
+echo $account,$main_head;
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="Scripts/FC1_6_JS.js"></script>
+    <link rel="stylesheet" href="Scripts/FC1_6_CSS.css">
     <title>Most Ordered Foods</title>
     <style>
         body {
@@ -85,18 +95,6 @@
 </head>
 <body>
 
-    <header>
-        <h1>Most Ordered Foods</h1>
-        <nav>
-            <a href="#">Home</a>
-            <a href="FC.php">Food Courts</a>
-            <a href="#">Most Ordered</a>
-            <a href="#">About Us</a>
-            <a href="#">Contact</a>
-            <a href="login.php">Logout</a>
-        </nav>
-    </header>
-
     <div class="hero">
         <p>Discover the Most Popular Dishes</p>
     </div>
@@ -118,8 +116,10 @@
         <div class="food-item">
             <button style="background-image: url('fooditem5-image.jpg');" onclick="window.location.href='#';">Food Item 5</button>
         </div>
+        
     </section>
-
+       
+    
     <footer>
         <p>&copy; 2025 Food Courts</p>
         <p><a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
