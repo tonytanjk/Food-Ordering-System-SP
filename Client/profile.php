@@ -1,7 +1,5 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
-echo $main_head;
 // Retrieve user information from the database
 $user_id = $_SESSION['user_id'];
 

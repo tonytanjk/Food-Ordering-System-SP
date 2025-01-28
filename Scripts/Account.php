@@ -2,7 +2,6 @@
 
 <?php
 $account = <<<HTML
-<link rel="stylesheet" href="../Scripts/FC1_6_CSS.css">
 <div class="side-section">
     <!-- Balance -->
     <div class="balance">

@@ -2,7 +2,6 @@
 <?php 
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
-echo $main_head;
 ?>
 <!DOCTYPE html>
 <!--

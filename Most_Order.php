@@ -1,9 +1,8 @@
 <?php
 
 // Include database connection
-include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
-echo $account,$main_head;
+include_once 'Scripts/common.php';
+include 'Scripts/Account.php';
 ?>
 
 <!DOCTYPE html>
