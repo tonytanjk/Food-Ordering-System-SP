@@ -37,7 +37,8 @@ echo $account,$main_head;
                 <div class="cart-total">
                     <p><strong>Total Price:</strong> $<?= number_format(array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $_SESSION['cart'])), 2) ?></p>
                 </div>
-                <a href="../Payment/cart.php" class="checkout-btn">Proceed to Checkout</a>
+                <!-- Link to the cart.php page after checkout -->
+                <a href="/ProjectCSAD/Payment/cart.php" class="checkout-btn">Proceed to Checkout</a>
             </div>
         <?php else: ?>
             <p>Your cart is empty.</p>
@@ -66,28 +67,28 @@ echo $account,$main_head;
         <?php elseif ($stall_id): ?>
             <!-- Display food items for the selected food stall -->
             <h2>Food Menu</h2>
-    <div class="food-items-grid">
-        <?php 
-        // Loop through food items for the selected food stall
-        while ($food_item = $food_result->fetch_assoc()):?>
-            <div class="food-item-card">
-                <div class="food-item-details">
-                    <h2><?= htmlspecialchars($food_item['food_name']) ?></h2>
-                    <p><?= htmlspecialchars($food_item['description']) ?></p>
-                    <p class="price">Price: $<?= number_format($food_item['price'], 2) ?></p>                    
-                    <!-- Add to Cart Form -->
-                    <form action="../Payment/addcart.php" method="POST">
-                        <input type="hidden" name="food_item_id" value="<?= $food_item['food_item_id'] ?>">
-                        <input type="hidden" name="stall_id" value="<?= $stall_id ?>">
-                        <label for="quantity-<?= $food_item['food_item_id'] ?>">Quantity:</label>
-                        <input type="number" id="quantity-<?= $food_item['food_item_id'] ?>" name="quantity" value="1" min="1" max="100" required>
-                        <button type="submit" class="add-to-cart-btn">Add to Cart</button>
-                    </form>
-                </div>
+            <div class="food-items-grid">
+                <?php 
+                // Loop through food items for the selected food stall
+                while ($food_item = $food_result->fetch_assoc()):?>
+                    <div class="food-item-card">
+                        <div class="food-item-details">
+                            <h2><?= htmlspecialchars($food_item['food_name']) ?></h2>
+                            <p><?= htmlspecialchars($food_item['description']) ?></p>
+                            <p class="price">Price: $<?= number_format($food_item['price'], 2) ?></p>                    
+                            <!-- Add to Cart Form -->
+                            <form action="../Payment/addcart.php" method="POST">
+                                <input type="hidden" name="food_item_id" value="<?= $food_item['food_item_id'] ?>">
+                                <input type="hidden" name="stall_id" value="<?= $stall_id ?>">
+                                <label for="quantity-<?= $food_item['food_item_id'] ?>">Quantity:</label>
+                                <input type="number" id="quantity-<?= $food_item['food_item_id'] ?>" name="quantity" value="1" min="1" max="100" required>
+                                <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
             </div>
-        <?php endwhile; ?>
-    </div>
-<?php endif; ?>
+        <?php endif; ?>
     </div>
 </body>
 </html>

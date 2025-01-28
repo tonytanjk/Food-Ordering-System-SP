@@ -1,7 +1,7 @@
 <?php 
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
-echo $account,$main_head;
+echo $account, $main_head;
 ?>
 
 <!DOCTYPE html>
@@ -174,6 +174,7 @@ echo $account,$main_head;
         .contactForm .inputBox input[type="submit"]:hover {
             background: #019da8;
         }
+
     </style>
 </head>
 <body>
@@ -208,10 +209,11 @@ echo $account,$main_head;
             </div>
 
             <div class="contactForm">
-                <form action="contact_form_handler.php" method="post">
+                <form action="https://api.web3forms.com/submit" method="POST">
+                    <input type="hidden" name="access_key" value="d82c9256-27b0-4ad7-b369-1598033bf698">
                     <h2>Send Message</h2>
                     <div class="inputBox">
-                        <input type="text" name="full_name" required="required">
+                        <input type="text" name="name" required="required">
                         <span>Full Name</span>
                     </div>
 
@@ -226,7 +228,7 @@ echo $account,$main_head;
                     </div>
 
                     <div class="inputBox">
-                        <input type="submit" value="Send">
+                        <input type="submit" value="Submit">
                     </div>
                 </form>
             </div>
