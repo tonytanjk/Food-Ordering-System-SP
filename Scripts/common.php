@@ -54,6 +54,22 @@ function getFoodStalls($foodCourtId, $conn) {
     return $stmt->get_result();
 }
 
+// Example function to fetch total sales for a specific food court and stall
+function getTotalSales($conn, $food_court_id, $stall_id) {
+    $query = "SELECT SUM(o.total_amount) AS total_sales
+              FROM orders o
+              JOIN order_items oi ON o.order_id = oi.order_id
+              JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+              WHERE fi.stall_id = ? AND fi.food_court_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ii", $food_court_id, $stall_id); // Match the order of parameters
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return $row['total_sales'] ?? 0; // Return total sales or 0 if no sales exist
+}
+
+
 // Fetch food items for a given stall
 function getFoodItems($stallId, $conn) {
     $query = "SELECT * FROM food_items WHERE stall_id = ?";
@@ -63,45 +79,52 @@ function getFoodItems($stallId, $conn) {
     return $stmt->get_result();
 }
 
-// Fetch total sales amount
-function getTotalSales($conn) {
-    $query = "SELECT SUM(total_amount) AS total_sales FROM orders";
-    $result = $conn->query($query);
-    return $result->fetch_assoc()['total_sales'] ?? 0.00;
-}
-
-// Fetch total orders count
-function getTotalOrders($conn) {
-    $query = "SELECT COUNT(*) AS total_orders FROM orders";
-    $result = $conn->query($query);
-    return $result->fetch_assoc()['total_orders'] ?? 0;
-}
-
-// Calculate average order value
-function getAverageOrderValue($conn) {
-    $totalSales = getTotalSales($conn);
-    $totalOrders = getTotalOrders($conn);
-    return $totalOrders > 0 ? $totalSales / $totalOrders : 0.00;
-}
-
-// Fetch sales trends by date (last N days)
-function getSalesTrends($days, $conn) {
-    $query = "
-        SELECT DATE(order_date) AS order_date, SUM(total_amount) AS daily_sales 
-        FROM orders 
-        WHERE order_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
-        GROUP BY DATE(order_date) 
-        ORDER BY order_date ASC";
+// Example function to fetch total orders for a specific food court and stall
+function getTotalOrders($conn, $food_court_id, $stall_id) {
+    $query = "SELECT COUNT(o.order_id) AS total_orders
+              FROM orders o
+              JOIN order_items oi ON o.order_id = oi.order_id
+              JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+              WHERE fi.stall_id = ? AND fi.food_court_id = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $days);
+    $stmt->bind_param("ii", $food_court_id, $stall_id); // Match the order of parameters
     $stmt->execute();
     $result = $stmt->get_result();
-    $trends = [];
-    while ($row = $result->fetch_assoc()) {
-        $trends[] = $row;
-    }
-    return $trends;
+    $row = $result->fetch_assoc();
+    return $row['total_orders'] ?? 0;
 }
+
+// Example function to calculate the average order value for a specific food court and stall
+function getAverageOrderValue($conn, $food_court_id, $stall_id) {
+    $query = "SELECT AVG(o.total_amount) AS average_order_value
+              FROM orders o
+              JOIN order_items oi ON o.order_id = oi.order_id
+              JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+              WHERE fi.stall_id = ? AND fi.food_court_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ii", $food_court_id, $stall_id); // Match the order of parameters
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return $row['average_order_value'] ?? 0; // Return 0 if no average found
+}
+
+// Example function to fetch sales trends for the last 7 days for a specific food court and stall
+function getSalesTrends($days, $conn, $food_court_id, $stall_id) {
+    $query = "SELECT DATE(o.order_date) AS date, SUM(o.total_amount) AS daily_sales
+              FROM orders o
+              JOIN order_items oi ON o.order_id = oi.order_id
+              JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+              WHERE fi.stall_id = ? AND fi.food_court_id = ? AND o.order_date >= CURDATE() - INTERVAL ? DAY
+              GROUP BY DATE(o.order_date)
+              ORDER BY DATE(o.order_date) DESC";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("iii", $food_court_id, $stall_id, $days); // Match the order of parameters
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_all(MYSQLI_ASSOC); // Return the trend data
+}
+
 
 // Fetch weekly revenue
 function getWeeklyRevenue($conn) {
@@ -138,11 +161,6 @@ function getTopSellingItems($conn, $foodCourtId, $stallId, $limit = 10) {
 
 // Example usage for sales metrics (For Vendor)
 $accountBalance = getAccountBalance($userId, $conn);
-$totalSales = getTotalSales($conn);
-$totalOrders = getTotalOrders($conn);
-$averageOrderValue = getAverageOrderValue($conn);
-$salesTrends = getSalesTrends(7, $conn); // Last 7 days
-$weeklyRevenue = getWeeklyRevenue($conn);
 
 // Fetch food court ID and food items for a specific court or stall (For FC1 - FC6)
 $food_court_id = isset($_GET['food_court_id']) ? intval($_GET['food_court_id']) : 4;
