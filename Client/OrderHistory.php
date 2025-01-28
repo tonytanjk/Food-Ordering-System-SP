@@ -154,36 +154,60 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
     </style>
     <script>
         function showOrderDetails(orderId) {
-            console.log('Fetching details for order ID:', orderId); // Debugging line
-            // Fetch order details using AJAX
-            fetch(`fetch_order_details.php?order_id=${orderId}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Order details:', data); // Debugging line
-                    const popup = document.getElementById('popup');
-                    const overlay = document.getElementById('overlay');
-                    const tableBody = document.getElementById('popup-table-body');
+    console.log('Fetching details for order ID:', orderId); // Debugging line
 
-                    // Clear previous data
-                    tableBody.innerHTML = '';
+    // Fetch order details using AJAX
+    fetch(`fetch_order_details.php?order_id=${orderId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Order details:', data); // Debugging line
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+            const tableBody = document.getElementById('popup-table-body');
+            const reasonContainer = document.getElementById('popup-cancellation-reason'); // New element for reason
 
-                    // Populate table with new data
-                    data.forEach(item => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${item.food_name}</td>
-                            <td>${item.quantity}</td>
-                            <td>$${parseFloat(item.price).toFixed(2)}</td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
+            // Clear previous data
+            tableBody.innerHTML = '';
+            reasonContainer.innerHTML = ''; // Clear the cancellation reason container
 
-                    // Show the popup and overlay
-                    popup.style.display = 'block';
-                    overlay.style.display = 'block';
-                })
-                .catch(error => console.error('Error fetching order details:', error)); // Debugging line
-        }
+            // Handle error from PHP (if any)
+            if (data.error) {
+                alert('Error: ' + data.error);
+                return;
+            }
+
+            // Populate table with new data (food details)
+            data.items.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.food_name}</td>
+                    <td>${item.quantity}</td>
+                    <td>$${parseFloat(item.price).toFixed(2)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Check if the order was cancelled and show the reason if available
+            if (data.status === 'Cancelled') {
+                const reason = data.reason ? data.reason : 'No reason provided.';
+                reasonContainer.innerHTML = `<p><strong>Reason for Cancellation:</strong> ${reason}</p>`;
+            }
+
+            // Show the popup and overlay
+            popup.style.display = 'block';
+            overlay.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error fetching order details:', error);
+            alert('Error fetching order details: ' + error.message);
+        });
+}
+
 
         function closePopup() {
             const popup = document.getElementById('popup');
@@ -232,6 +256,10 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
             <!-- Order details will be populated here -->
         </tbody>
     </table>
+
+    <!-- Cancellation Reason Section (if applicable) -->
+    <div id="popup-cancellation-reason"></div> <!-- This will display the cancellation reason if applicable -->
+
     <button class="close-btn" onclick="closePopup()">Close</button>
 </div>
 

@@ -1,5 +1,6 @@
 <?php
 include '../Scripts/common.php';
+
 // Generate a tracking ID
 function generateTrackingID() {
     return strtoupper(uniqid('ORDER_'));
@@ -29,13 +30,26 @@ if (isset($_POST['checkout'])) {
 
         // Insert into order_items table
         foreach ($_SESSION['cart'] as $food_id => $cart_data) {
-            $stmt = $pdo->prepare("INSERT INTO order_items (order_id, food_item_id, quantity, price) VALUES (:order_id, :food_item_id, :quantity, :price)");
-            $stmt->execute([
-                'order_id' => $order_id,
-                'food_item_id' => $food_id,
-                'quantity' => $cart_data['quantity'],
-                'price' => $cart_data['price']
-            ]);
+            // Get the food_court_id and stall_id from the food_item (assuming food_items table contains these)
+            $stmt = $pdo->prepare("SELECT food_court_id, stall_id FROM food_items WHERE food_item_id = :food_item_id");
+            $stmt->execute(['food_item_id' => $food_id]);
+            $food_item = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($food_item) {
+                $food_court_id = $food_item['food_court_id'];
+                $stall_id = $food_item['stall_id'];
+
+                // Insert order item with food_court_id and stall_id
+                $stmt = $pdo->prepare("INSERT INTO order_items (order_id, food_item_id, quantity, price, food_court_id, stall_id) VALUES (:order_id, :food_item_id, :quantity, :price, :food_court_id, :stall_id)");
+                $stmt->execute([
+                    'order_id' => $order_id,
+                    'food_item_id' => $food_id,
+                    'quantity' => $cart_data['quantity'],
+                    'price' => $cart_data['price'],
+                    'food_court_id' => $food_court_id,
+                    'stall_id' => $stall_id
+                ]);
+            }
         }
 
         // Clear the cart after checkout

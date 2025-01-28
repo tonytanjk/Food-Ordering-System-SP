@@ -3,7 +3,6 @@
 include '../scripts/common.php';
 
 // Assume user_id is stored in session after login
-session_start();
 $user_id = $_SESSION['user_id'] ?? 0;
 
 // Fetch stall_id and food_court_id for the logged-in user
@@ -18,15 +17,15 @@ $stall_id = $user['stall_id'] ?? 0;
 $food_court_id = $user['food_court_id'] ?? 0;
 
 // Fetch sales metrics
-$totalSales = getTotalSales($conn, $food_court_id, $stall_id);
-$totalOrders = getTotalOrders($conn, $food_court_id, $stall_id);
-$averageOrderValue = getAverageOrderValue($conn, $food_court_id, $stall_id);
-$salesTrends = getSalesTrends(7, $conn, $food_court_id, $stall_id); // Last 7 days
+$totalSales = getTotalSales($conn, $stall_id, $food_court_id);
+$totalOrders = getTotalOrders($conn, $stall_id, $food_court_id);
+$averageOrderValue = getAverageOrderValue($conn, $stall_id, $food_court_id);
+$salesTrends = getSalesTrends(7, $conn, $stall_id, $food_court_id); // Last 7 days
 
 // Fetch stall items
-$query = "SELECT * FROM food_items WHERE stall_id = ?";
+$query = "SELECT * FROM food_items WHERE stall_id = ? AND food_court_id = ?";
 $stmt = $conn->prepare($query);
-$stmt->bind_param("i", $stall_id);
+$stmt->bind_param("ii", $stall_id, $food_court_id);
 $stmt->execute();
 $stallItems = $stmt->get_result();
 ?>
@@ -83,6 +82,7 @@ $stallItems = $stmt->get_result();
             background: #f4f4f4;
             border-radius: 8px;
             text-align: center;
+            
         }
 
         .widget h3 {
@@ -193,6 +193,10 @@ $stallItems = $stmt->get_result();
         <div class="widget">
             <h3>Average Order Value</h3>
             <p>$<?= number_format($averageOrderValue, 2) ?></p>
+        </div>
+        <div class="widget">
+            <h3>Total Refunds</h3>
+            <p style="color: red">$<?= number_format($getTotalRefunds, 2) ?></p>
         </div>
 
         <div class="stall-items">
