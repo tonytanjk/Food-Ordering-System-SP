@@ -127,10 +127,23 @@ function getSalesTrends($days, $conn, $food_court_id, $stall_id) {
     return $result->fetch_all(MYSQLI_ASSOC); // Return the trend data
 }
 
-function getTotalRefunds($conn) {
-    $query = "SELECT SUM(total_amount) AS total_sales FROM orders WHERE status = 'Cancelled'";
-    $result = $conn->query($query);
-    return $result->fetch_assoc()['total_sales'] ?? 0.00;
+function getTotalRefunds($conn, $stall_id, $food_court_id) {
+    $query = "
+        SELECT SUM(o.total_amount) AS total_refunds
+        FROM orders o
+        JOIN order_items oi ON o.order_id = oi.order_id
+        JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+        WHERE o.status = 'Cancelled'
+        AND fi.stall_id = ? 
+        AND fi.food_court_id = ?
+    ";
+    
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ii", $stall_id, $food_court_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    return $result->fetch_assoc()['total_refunds'] ?? 0.00;
 }
 
 // Fetch weekly revenue

@@ -1,7 +1,7 @@
 <?php
 // Include database connection and common functions
 include '../scripts/common.php';
-
+include 'VendorCommon.php';
 // Assume user_id is stored in session after login
 $user_id = $_SESSION['user_id'] ?? 0;
 
@@ -21,6 +21,7 @@ $totalSales = getTotalSales($conn, $stall_id, $food_court_id);
 $totalOrders = getTotalOrders($conn, $stall_id, $food_court_id);
 $averageOrderValue = getAverageOrderValue($conn, $stall_id, $food_court_id);
 $salesTrends = getSalesTrends(7, $conn, $stall_id, $food_court_id); // Last 7 days
+$getTotalRefunds = getTotalRefunds($conn, $stall_id, $food_court_id);
 
 // Fetch stall items
 $query = "SELECT * FROM food_items WHERE stall_id = ? AND food_court_id = ?";
@@ -173,12 +174,7 @@ $stallItems = $stmt->get_result();
 <body>
     <header>
         <h1>Vendor Home</h1>
-        <nav>
-            <a href="manage_orders.php">Manage Orders</a>
-            <a href="SalesMetrics.php">Sales Metrics</a>
-            <a href="top_sales.php">Top Sales</a>
-            <a href="../Client/login.php">Logout</a>
-        </nav>
+        <?php echo $navi; // Display the navigation bar ?>
     </header>
 
     <div class="container">

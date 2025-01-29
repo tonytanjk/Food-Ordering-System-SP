@@ -1,5 +1,6 @@
 <?php
 include '../scripts/common.php'; // Include common.php for database connection and common functions
+include 'VendorCommon.php';
 
 // Fetch stall_id and food_court_id for the logged-in user
 $user_id = $_SESSION['user_id'];
@@ -146,12 +147,7 @@ if (isset($_POST['cancel_order'])) {
 <body>
     <header>
         <h1 style="color: white">Manage Orders</h1>
-        <nav>
-            <a href="vendor_home.php">Home</a>
-            <a href="SalesMetrics.php">Sales Metrics</a>
-            <a href="SalesHistory.php">Top Sales</a>
-            <a href="../Client/login.php">Logout</a>
-        </nav>
+        <?php echo $navi; // Display the navigation bar ?>
     </header>
     <div class="container">
         <h1>Open Orders</h1>

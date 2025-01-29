@@ -1,16 +1,30 @@
 <?php
 session_start();
 include '../scripts/common.php'; // Include common.php for database connection and common functions
+include 'VendorCommon.php';
 
-// Fetch sales history for the vendor using stall_id (already managed in common.php)
+// Fetch stall_id and food_court_id for the logged-in vendor
+$user_id = $_SESSION['user_id'];
+$query = "SELECT stall_id, food_court_id FROM users WHERE user_id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+$stall_id = $user['stall_id'] ?? 0;
+$food_court_id = $user['food_court_id'] ?? 0;
+
+// Fetch sales history for the vendor based on stall_id and food_court_id
 $query = "
     SELECT o.order_id, oi.quantity, oi.price, fi.food_name, o.total_amount, o.payment_method, o.order_date, o.status
     FROM orders o
     JOIN order_items oi ON o.order_id = oi.order_id
     JOIN food_items fi ON oi.food_item_id = fi.food_item_id
-    WHERE o.status = 'Completed'
+    WHERE fi.stall_id = ? AND fi.food_court_id = ? AND o.status IN ('Completed', 'Cancelled') 
     ORDER BY o.order_date DESC";
-$stmt = $conn->prepare($query); // Use $conn from common.php
+$stmt = $conn->prepare($query);
+$stmt->bind_param("ii", $stall_id, $food_court_id);
 $stmt->execute();
 $orders = $stmt->get_result()->fetch_all(MYSQLI_ASSOC); // Fetch all results as an associative array
 ?>
@@ -81,12 +95,7 @@ $orders = $stmt->get_result()->fetch_all(MYSQLI_ASSOC); // Fetch all results as 
 <body>
     <header>
         <h1 style="color: white">Sales History</h1>
-        <nav>
-            <a href="vendor_home.php">Home</a>
-            <a href="SalesMetrics.php">Sales Metrics</a>
-            <a href="SalesHistory.php">Sales History</a>
-            <a href="../Client/login.php">Logout</a>
-        </nav>
+        <?php echo $navi; // Display the navigation bar ?>
     </header>
 
     <div class="container">
@@ -109,6 +118,8 @@ $orders = $stmt->get_result()->fetch_all(MYSQLI_ASSOC); // Fetch all results as 
                     <tr>
                         <td><?= htmlspecialchars($order['order_id']) ?></td>
                         <td><?= htmlspecialchars($order['food_name']) ?></td>
+                        <td><?= htmlspecialchars($order['quantity']) ?></td>
+                        <td>$<?= number_format($order['price'], 2) ?></td>
                         <td>$<?= number_format($order['total_amount'], 2) ?></td>
                         <td><?= htmlspecialchars($order['payment_method']) ?></td>
                         <td><?= htmlspecialchars($order['order_date']) ?></td>
