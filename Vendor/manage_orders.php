@@ -52,16 +52,50 @@ if (isset($_POST['cancel_order'])) {
     $order_id = $_POST['order_id'];
     $reason = $_POST['reason']; // Get cancellation reason from POST data
 
-    // Check if reason is not empty
     if (!empty($reason)) {
-        // Update order status to 'Cancelled' and save reason
-        $stmt = $conn->prepare("UPDATE orders SET status = 'Cancelled', reason = ? WHERE order_id = ?");
-        $stmt->bind_param('si', $reason, $order_id);
-        $stmt->execute();
+        // Start transaction for data integrity
+        $conn->begin_transaction();
 
-        // Redirect to refresh the list of orders
-        header("Location: manage_orders.php");
-        exit();
+        try {
+            // Fetch the order details (user_id and total_amount)
+            $stmt = $conn->prepare("SELECT user_id, total_amount FROM orders WHERE order_id = ?");
+            $stmt->bind_param('i', $order_id);
+            $stmt->execute();
+            $order = $stmt->get_result()->fetch_assoc();
+            $user_id = $order['user_id'];
+            $refund_amount = $order['total_amount'];
+
+            // Fetch the current account balance of the user
+            $stmt = $conn->prepare("SELECT account_balance FROM users WHERE user_id = ?");
+            $stmt->bind_param('i', $user_id);
+            $stmt->execute();
+            $user = $stmt->get_result()->fetch_assoc();
+            $current_balance = $user['account_balance'];
+
+            // Calculate new balance
+            $new_balance = $current_balance + $refund_amount;
+
+            // Update the user's account balance
+            $stmt = $conn->prepare("UPDATE users SET account_balance = ? WHERE user_id = ?");
+            $stmt->bind_param('di', $new_balance, $user_id);
+            $stmt->execute();
+
+            // Update order status to 'Cancelled' and save the reason
+            $stmt = $conn->prepare("UPDATE orders SET status = 'Cancelled', reason = ? WHERE order_id = ?");
+            $stmt->bind_param('si', $reason, $order_id);
+            $stmt->execute();
+
+            // Commit the transaction
+            $conn->commit();
+
+            // Redirect to refresh the list of orders
+            header("Location: manage_orders.php");
+            exit();
+        } catch (Exception $e) {
+            // Rollback transaction if any error occurs
+            $conn->rollback();
+            echo "<script>alert('Error processing the refund. Please try again.');</script>";
+        }
     } else {
         echo "<script>alert('Please provide a reason for cancellation.');</script>";
     }
