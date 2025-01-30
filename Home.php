@@ -2,6 +2,8 @@
 // Include database connection file
 include 'Scripts/common.php';
 include 'Scripts/Account.php';
+include $_SERVER['DOCUMENT_ROOT'] .  '/projectCSAD/Vendor/VendorCommon.php';
+
 echo $account,$main_head;
 ?>
 <!DOCTYPE html>
@@ -283,10 +285,8 @@ echo $account,$main_head;
     </div>
 </section>
 
-<footer>
-    <p>&copy; 2025 I'm going nuts</p>
-    <p><a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
-</footer>
+    <?php echo $foot; // Display the footer  ?>
+
 
 </body>
 </html>

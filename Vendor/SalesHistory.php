@@ -1,5 +1,4 @@
 <?php
-session_start();
 include '../scripts/common.php'; // Include common.php for database connection and common functions
 include 'VendorCommon.php';
 
@@ -17,11 +16,12 @@ $food_court_id = $user['food_court_id'] ?? 0;
 
 // Fetch sales history for the vendor based on stall_id and food_court_id
 $query = "
-    SELECT o.order_id, oi.quantity, oi.price, fi.food_name, o.total_amount, o.payment_method, o.order_date, o.status
+    SELECT o.order_id, fi.food_name, SUM(oi.quantity) AS total_quantity, fi.price, o.total_amount, o.payment_method, o.order_date, o.status
     FROM orders o
     JOIN order_items oi ON o.order_id = oi.order_id
     JOIN food_items fi ON oi.food_item_id = fi.food_item_id
     WHERE fi.stall_id = ? AND fi.food_court_id = ? AND o.status IN ('Completed', 'Cancelled') 
+    GROUP BY o.order_id, fi.food_name, fi.price, o.total_amount, o.payment_method, o.order_date, o.status
     ORDER BY o.order_date DESC";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("ii", $stall_id, $food_court_id);
@@ -114,31 +114,31 @@ $orders = $stmt->get_result()->fetch_all(MYSQLI_ASSOC); // Fetch all results as 
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($orders as $order): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($order['order_id']) ?></td>
-                        <td><?= htmlspecialchars($order['food_name']) ?></td>
-                        <td><?= htmlspecialchars($order['quantity']) ?></td>
-                        <td>$<?= number_format($order['price'], 2) ?></td>
-                        <td>$<?= number_format($order['total_amount'], 2) ?></td>
-                        <td><?= htmlspecialchars($order['payment_method']) ?></td>
-                        <td><?= htmlspecialchars($order['order_date']) ?></td>
-                        <td>
-                            <?php
-                            if ($order['status'] === 'Completed') {
-                                echo "<span class='completed'>" . htmlspecialchars($order['status']) . "</span>";
-                            } elseif ($order['status'] === 'Cancelled') {
-                                echo "<span class='cancelled'>" . htmlspecialchars($order['status']) . "</span>";
-                            } else {
-                                echo "<span class='pending'>" . htmlspecialchars($order['status']) . "</span>";
-                            }
-                            ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
+            <?php foreach ($orders as $order): ?>
+                <tr>
+                    <td><?= htmlspecialchars($order['order_id']) ?></td>
+                    <td><?= htmlspecialchars($order['food_name']) ?></td>
+                    <td><?= htmlspecialchars($order['total_quantity']) ?></td> <!-- Combined quantity -->
+                    <td>$<?= number_format($order['price'], 2) ?></td>
+                    <td>$<?= number_format($order['price'] * $order['total_quantity'], 2) ?></td> <!-- Total for this food item -->
+                    <td><?= htmlspecialchars($order['payment_method']) ?></td>
+                    <td><?= htmlspecialchars($order['order_date']) ?></td>
+                    <td>
+                        <?php
+                        if ($order['status'] === 'Completed') {
+                            echo "<span class='completed'>" . htmlspecialchars($order['status']) . "</span>";
+                        } elseif ($order['status'] === 'Cancelled') {
+                            echo "<span class='cancelled'>" . htmlspecialchars($order['status']) . "</span>";
+                        } else {
+                            echo "<span class='pending'>" . htmlspecialchars($order['status']) . "</span>";
+                        }
+                        ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
             </tbody>
         </table>
     </div>
-
+<?php echo $foot; // Display the footer  ?>
 </body>
 </html>

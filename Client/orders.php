@@ -3,15 +3,19 @@ include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
 echo $account, $main_head;
 
-// Get the logged-in user's ID
+// Ensure user is logged in
+if (!isset($_SESSION['user_id'])) {
+    die("Unauthorized access.");
+}
+
 $user_id = $_SESSION['user_id'];
 
 // Check if the cancel button was clicked
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_order_id'])) {
     $cancel_order_id = $_POST['cancel_order_id'];
 
-    // Fetch the order details to calculate refund
-    $query = "SELECT total_amount, status, order_date FROM orders WHERE order_id = ? AND user_id = ?";
+    // Fetch the order details including UNIX timestamp for order_date
+    $query = "SELECT total_amount, status, UNIX_TIMESTAMP(order_date) AS order_time FROM orders WHERE order_id = ? AND user_id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param('ii', $cancel_order_id, $user_id);
     $stmt->execute();
@@ -19,11 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_order_id'])) {
     $order = $result->fetch_assoc();
 
     if ($order) {
-        $order_time = strtotime($order['order_date']);
+        $order_time = $order['order_time']; // Now a UNIX timestamp
         $current_time = time();
 
-        // Check if the order is eligible for cancellation
-        if ($order['status'] === 'Pending' && ($current_time - $order_time) <= 120) {
+        // Check if the order is eligible for cancellation (within 2 minutes)
+        if ($order['status'] === 'Pending' && ($current_time - $order_time) <= 120) { 
             $refund_amount = $order['total_amount'];
 
             // Begin transaction
@@ -57,7 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_order_id'])) {
 
 // Fetch current and cancelled orders for the logged-in user
 $query = "
-    SELECT o.order_id, o.total_amount, o.payment_method, o.order_date, o.status, oi.food_item_id, oi.quantity, oi.price, fi.food_name
+    SELECT o.order_id, o.total_amount, o.payment_method, UNIX_TIMESTAMP(o.order_date) AS order_time, o.status, 
+           oi.food_item_id, oi.quantity, oi.price, fi.food_name
     FROM orders o
     JOIN order_items oi ON o.order_id = oi.order_id
     JOIN food_items fi ON oi.food_item_id = fi.food_item_id
@@ -83,7 +88,6 @@ $result = $stmt->get_result();
             padding: 0;
             background-color: #f8f8f8;
         }
-
         .container {
             max-width: 1200px;
             margin: 20px auto;
@@ -92,13 +96,11 @@ $result = $stmt->get_result();
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
         h2 {
             text-align: center;
             color: #444;
             margin-bottom: 20px;
         }
-
         .message {
             text-align: center;
             margin: 10px 0;
@@ -106,36 +108,29 @@ $result = $stmt->get_result();
             border-radius: 5px;
             font-size: 16px;
         }
-
         .success {
             color: green;
             background-color: #e8f5e9;
         }
-
         .error {
             color: red;
             background-color: #fbe9e7;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
         }
-
         table th, table td {
             border: 1px solid #ddd;
             padding: 10px;
             text-align: left;
         }
-
         table th {
             background-color: #f4f4f4;
         }
-
         table tbody tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-
         .cancel-btn {
             display: inline-block;
             padding: 5px 10px;
@@ -146,7 +141,6 @@ $result = $stmt->get_result();
             cursor: pointer;
             text-align: center;
         }
-
         .cancel-btn:hover {
             background-color: #cc0000;
         }
@@ -187,25 +181,18 @@ $result = $stmt->get_result();
                     <td>$<?= number_format($order['price'], 2) ?></td>
                     <td>$<?= number_format($order['total_amount'], 2) ?></td>
                     <td><?= htmlspecialchars($order['payment_method']) ?></td>
-                    <td><?= htmlspecialchars($order['order_date']) ?></td>
+                    <td><?= date("Y-m-d H:i:s", $order['order_time']) ?></td>
                     <td><?= htmlspecialchars($order['status']) ?></td>
                     <td>
-                        <?php if ($order['status'] === 'Pending'): ?>
-                            <?php
-                            $order_time = strtotime($order['order_date']);
-                            $current_time = time();
-                            if (($current_time - $order_time) <= 120): ?>
-                                <form method="POST" style="display:inline;">
-                                    <input type="hidden" name="cancel_order_id" value="<?= $order['order_id'] ?>">
-                                    <button type="submit" class="cancel-btn">Cancel</button>
-                                </form>
-                            <?php else: ?>
-                                <span style="color: gray;">Not Allowed</span>
-                            <?php endif; ?>
-                            <?php elseif ($order['status'] === 'Completed'): ?>
-                            <span style="color: green;">Completed</span>
+                        <?php if ($order['status'] === 'Pending' && (time() - $order['order_time']) <= 120): ?>
+                            <form method="POST" style="display:inline;">
+                                <input type="hidden" name="cancel_order_id" value="<?= $order['order_id'] ?>">
+                                <button type="submit" class="cancel-btn">Cancel</button>
+                            </form>
+                        <?php elseif($order['status'] === 'Cancelled'): ?>
+                            <span style="color: gray;">Cancelled</span>
                         <?php else: ?>
-                            <span style="color: red;">Cancelled</span>
+                            <span style="color: red;">Not Allowed</span>
                         <?php endif; ?>
                     </td>
                 </tr>

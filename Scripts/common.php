@@ -66,45 +66,54 @@ function getFoodItems($stallId, $conn) {
     return $stmt->get_result();
 }
 
-// Example function to fetch total sales for a specific food court and stall
-function getTotalSales($conn, $food_court_id, $stall_id) {
-    $query = "SELECT SUM(o.total_amount) AS total_sales
-              FROM orders o
-              JOIN order_items oi ON o.order_id = oi.order_id
-              JOIN food_items fi ON oi.food_item_id = fi.food_item_id
-              WHERE fi.stall_id = ? AND fi.food_court_id = ?";
+function getTotalSales($conn, $stall_id, $food_court_id) {
+    $query = "
+        SELECT SUM(o.total_amount) AS total_sales
+        FROM orders o
+        JOIN order_items oi ON o.order_id = oi.order_id
+        JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+        WHERE fi.stall_id = ? AND fi.food_court_id = ? AND o.status = 'Completed'
+    ";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("ii", $food_court_id, $stall_id); // Match the order of parameters
+    $stmt->bind_param("ii", $stall_id, $food_court_id); // Correct parameter order
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
+        
     return $row['total_sales'] ?? 0; // Return total sales or 0 if no sales exist
 }
 
-// Example function to fetch total orders for a specific food court and stall
-function getTotalOrders($conn, $food_court_id, $stall_id) {
-    $query = "SELECT COUNT(o.order_id) AS total_orders
+
+// Function to fetch total orders for a specific food court and stall
+function getTotalOrders($conn, $stall_id, $food_court_id) {
+    $query = "SELECT COUNT(DISTINCT o.order_id) AS total_orders
               FROM orders o
-              JOIN order_items oi ON o.order_id = oi.order_id
-              JOIN food_items fi ON oi.food_item_id = fi.food_item_id
-              WHERE fi.stall_id = ? AND fi.food_court_id = ?";
+              WHERE o.order_id IN (
+                  SELECT DISTINCT oi.order_id
+                  FROM order_items oi
+                  JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+                  WHERE fi.stall_id = ? AND fi.food_court_id = ?
+              )";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("ii", $food_court_id, $stall_id); // Match the order of parameters
+    $stmt->bind_param("ii", $stall_id, $food_court_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     return $row['total_orders'] ?? 0;
 }
 
-// Example function to calculate the average order value for a specific food court and stall
-function getAverageOrderValue($conn, $food_court_id, $stall_id) {
+// Function to calculate the average order value for a specific food court and stall
+function getAverageOrderValue($conn, $stall_id, $food_court_id) {
     $query = "SELECT AVG(o.total_amount) AS average_order_value
               FROM orders o
-              JOIN order_items oi ON o.order_id = oi.order_id
-              JOIN food_items fi ON oi.food_item_id = fi.food_item_id
-              WHERE fi.stall_id = ? AND fi.food_court_id = ?";
+              WHERE o.order_id IN (
+                  SELECT DISTINCT oi.order_id
+                  FROM order_items oi
+                  JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+                  WHERE fi.stall_id = ? AND fi.food_court_id = ?
+              )";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("ii", $food_court_id, $stall_id); // Match the order of parameters
+    $stmt->bind_param("ii", $stall_id, $food_court_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
@@ -127,23 +136,23 @@ function getSalesTrends($days, $conn, $food_court_id, $stall_id) {
     return $result->fetch_all(MYSQLI_ASSOC); // Return the trend data
 }
 
+// Function to calculate the total refunds for cancelled orders
 function getTotalRefunds($conn, $stall_id, $food_court_id) {
-    $query = "
-        SELECT SUM(o.total_amount) AS total_refunds
-        FROM orders o
-        JOIN order_items oi ON o.order_id = oi.order_id
-        JOIN food_items fi ON oi.food_item_id = fi.food_item_id
-        WHERE o.status = 'Cancelled'
-        AND fi.stall_id = ? 
-        AND fi.food_court_id = ?
-    ";
-    
+    $query = "SELECT SUM(o.total_amount) AS total_refunds
+              FROM orders o
+              WHERE o.status = 'Cancelled'
+              AND o.order_id IN (
+                  SELECT DISTINCT oi.order_id
+                  FROM order_items oi
+                  JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+                  WHERE fi.stall_id = ? AND fi.food_court_id = ?
+              )";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("ii", $stall_id, $food_court_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    
-    return $result->fetch_assoc()['total_refunds'] ?? 0.00;
+    $row = $result->fetch_assoc();
+    return $row['total_refunds'] ?? 0.00;
 }
 
 // Fetch weekly revenue

@@ -1,6 +1,7 @@
 <?php 
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
+include $_SERVER['DOCUMENT_ROOT'] .  '/projectCSAD/Vendor/VendorCommon.php';
 echo $account,$main_head;
 ?>
 
@@ -50,12 +51,9 @@ echo $account,$main_head;
             <!-- Display food stalls for the selected food court -->
             <h2>Food Stalls in Food Court #<?= htmlspecialchars($food_court_id) ?></h2>
             <div class="vendor-grid">
-                <?php while ($stall = $stall_result->fetch_assoc()): 
-                $stall_picture = !empty($stall['stall_picture']) && file_exists($_SERVER['DOCUMENT_ROOT'] . $stall['stall_picture'])
-                    ? $stall['stall_picture']
-                    : '/ProjectCSAD/uploads/unknown_food.jpg';                ?>
+                <?php while ($stall = $stall_result->fetch_assoc()):                 ?>
                     <a href="FC.php?vendor_id=<?= $food_court_id ?>&stall_id=<?= $stall['stall_id'] ?>" class="vendor-card">
-                        <img src="<?= htmlspecialchars($stall_picture) ?>" alt="<?= htmlspecialchars($stall['stall_name']) ?>">
+                    <img src="<?= !empty($stall['stall_picture']) ? '/ProjectCSAD' . htmlspecialchars($stall['stall_picture']) : '/ProjectCSAD/uploads/unknown_food.jpg' ?>" alt="<?= htmlspecialchars($stall['stall_picture']) ?>" onerror="this.onerror=null;this.src='/ProjectCSAD/uploads/unknown_food.jpg';" style="width: auto; height: 150px; object-fit: cover; border-radius: 8px;">
                         <div class="vendor-details">
                             <h2><?= htmlspecialchars($stall['stall_name']) ?></h2>
                             <p>Click to view food selection.</p>
@@ -69,8 +67,14 @@ echo $account,$main_head;
     <div class="food-items-grid">
         <?php 
         // Loop through food items for the selected food stall
-        while ($food_item = $food_result->fetch_assoc()):?>
+        while ($food_item = $food_result->fetch_assoc()): ?>
             <div class="food-item-card">
+                <div class="food-item-image">
+                <?php
+                $imagePath = !empty($food_item['image_path']) ? htmlspecialchars($food_item['image_path']) : '../uploads/unknown_food.jpg';
+                ?>
+                <img src="<?= $imagePath ?>" alt="<?= htmlspecialchars($food_item['food_name']) ?>" onerror="this.onerror=null;this.src='../uploads/unknown_food.jpg';" style="width: auto; height: 150px; object-fit: cover; border-radius: 8px;">
+                </div>
                 <div class="food-item-details">
                     <h2><?= htmlspecialchars($food_item['food_name']) ?></h2>
                     <p><?= htmlspecialchars($food_item['description']) ?></p>
@@ -89,5 +93,6 @@ echo $account,$main_head;
     </div>
 <?php endif; ?>
     </div>
+    <?php echo $foot; // Display the footer  ?>
 </body>
 </html>

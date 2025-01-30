@@ -16,14 +16,23 @@ $food_court_id = $user['food_court_id'] ?? 0;
 
 // Fetch open orders for this stall and food court
 $query = "
-    SELECT o.order_id, o.tracking_id, o.total_amount, o.payment_method, o.order_date, u.username, oi.food_item_id, fi.food_court_id, fi.stall_id
+    SELECT 
+        o.order_id, 
+        o.tracking_id, 
+        u.username, 
+        o.total_amount, 
+        o.payment_method, 
+        o.order_date, 
+        GROUP_CONCAT(CONCAT(fi.food_name, ' x', oi.quantity, ' ($', oi.price, ')') SEPARATOR ', ') AS order_details
     FROM orders o
     JOIN users u ON o.user_id = u.user_id
     JOIN order_items oi ON o.order_id = oi.order_id
     JOIN food_items fi ON oi.food_item_id = fi.food_item_id
     WHERE o.status = 'Pending' 
-    AND fi.food_court_id = ? AND fi.stall_id = ?
-    ORDER BY o.order_date DESC";
+    AND fi.food_court_id = ? 
+    AND fi.stall_id = ?
+    GROUP BY o.order_id
+    ORDER BY o.order_date DESC;";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("ii", $food_court_id, $stall_id); // Bind the vendor's food_court_id and stall_id
 $stmt->execute();
@@ -176,6 +185,43 @@ if (isset($_POST['cancel_order'])) {
         .cancel-button:hover {
             background-color: #c82333;
         }
+
+        /* Modal Styling */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%; /* Adjust as needed */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal .close-button:hover,
+        .modal .close-button:focus {
+            color: #000;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -201,33 +247,42 @@ if (isset($_POST['cancel_order'])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($orders as $order): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($order['order_id']) ?></td>
-                            <td><?= htmlspecialchars($order['tracking_id']) ?></td>
-                            <td><?= htmlspecialchars($order['username']) ?></td>
-                            <td>$<?= number_format($order['total_amount'], 2) ?></td>
-                            <td><?= htmlspecialchars($order['payment_method']) ?></td>
-                            <td><?= htmlspecialchars($order['order_date']) ?></td>
-                            <td>
-                                <form method="POST" action="">
-                                    <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['order_id']) ?>">
-                                    <button type="submit" name="close_order" class="action-button close-button">Close Order</button>
-                                    <button type="button" class="action-button cancel-button" onclick="confirmCancel(<?= htmlspecialchars($order['order_id']) ?>)">Cancel Order</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
+                <?php foreach ($orders as $order): ?>
+                <tr>
+                    <td><?= htmlspecialchars($order['order_id']) ?></td>
+                    <td><?= htmlspecialchars($order['tracking_id']) ?></td>
+                    <td><?= htmlspecialchars($order['username']) ?></td>
+                    <td>$<?= number_format($order['total_amount'], 2) ?></td>
+                    <td><?= htmlspecialchars($order['payment_method']) ?></td>
+                    <td><?= htmlspecialchars($order['order_date']) ?></td>
+                    <td>
+                        <form method="POST" action="">
+                            <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['order_id']) ?>">
+                            <button type="submit" name="close_order" class="action-button close-button">Close Order</button>
+                            <button type="button" class="action-button cancel-button" onclick="confirmCancel(<?= htmlspecialchars($order['order_id']) ?>)">Cancel Order</button>
+                        </form>
+                        <button class="action-button" onclick="viewOrderDetails(<?= htmlspecialchars($order['order_id']) ?>)">View Details</button>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
                 </tbody>
-            </table>
+                </table>
         <?php endif; ?>
     </div>
-
+    <!-- Modal for Order Details -->
+    <div id="orderDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h2>Order Details</h2>
+            <div id="orderDetailsContent">
+                <!-- Order details will be loaded dynamically here -->
+            </div>
+        </div>
+    </div>
     <script>
         function confirmCancel(orderId) {
             const reason = prompt("Please provide a reason for canceling this order:");
             if (reason !== null && reason.trim() !== "") {
-                // Create a form and submit it
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = 'manage_orders.php';
@@ -255,6 +310,57 @@ if (isset($_POST['cancel_order'])) {
                 alert("Reason is required to cancel the order.");
             }
         }
+
+        function viewOrderDetails(orderId) {
+            const modal = document.getElementById("orderDetailsModal");
+            const modalContent = document.getElementById("orderDetailsContent");
+            modal.style.display = "block";
+            modalContent.innerHTML = "<p>Loading...</p>";
+
+            fetch(`fetch_order.php?order_id=${orderId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        const totalAmount = parseFloat(data.total_amount) || 0; // Ensure it's a number
+                        const formattedAmount = totalAmount.toFixed(2); // Format the amount
+
+                        modalContent.innerHTML = `
+                            <p><strong>Order ID:</strong> ${data.order_id}</p>
+                            <p><strong>Tracking ID:</strong> ${data.tracking_id}</p>
+                            <p><strong>Customer:</strong> ${data.username}</p>
+                            <p><strong>Total Amount:</strong> $${formattedAmount}</p>
+                            <p><strong>Payment Method:</strong> ${data.payment_method}</p>
+                            <p><strong>Order Date:</strong> ${data.order_date}</p>
+                            <p><strong>Order Items:</strong><br>${data.order_details}</p>
+                        `;
+                    } else {
+                        modalContent.innerHTML = "<p>Failed to fetch order details.</p>";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching order details:", error);
+                    modalContent.innerHTML = "<p>Error fetching order details. Please try again later.</p>";
+                });
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("orderDetailsModal");
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById("orderDetailsModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
     </script>
+    <?php echo $foot; // Display the footer  ?>
 </body>
 </html>
+

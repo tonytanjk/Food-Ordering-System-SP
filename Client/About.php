@@ -1,6 +1,7 @@
 <?php 
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
+include $_SERVER['DOCUMENT_ROOT'] .  '/projectCSAD/Vendor/VendorCommon.php';
 echo $account,$main_head;
 ?>
 
@@ -191,9 +192,6 @@ echo $account,$main_head;
                 </div>
             </section>
         </div>
-    <footer>
-        <p>&copy; 2025 Food Courts</p>
-        <p><a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
-    </footer>
+    <?php echo $foot; // Display the footer  ?>
     </body>
 </html>
