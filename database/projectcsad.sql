@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 28, 2025 at 11:17 PM
+-- Generation Time: Feb 02, 2025 at 05:09 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -37,14 +37,6 @@ CREATE TABLE `account_topups` (
   `status` enum('pending','completed','failed') DEFAULT 'completed',
   `notes` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `account_topups`
---
-
-INSERT INTO `account_topups` (`topup_id`, `user_id`, `topup_amount`, `payment_method`, `transaction_reference`, `topup_date`, `status`, `notes`) VALUES
-(4, 1, 10.00, '', NULL, '2025-01-28 20:26:26', 'completed', NULL),
-(5, 1, 10.00, '', NULL, '2025-01-28 22:01:11', 'completed', NULL);
 
 -- --------------------------------------------------------
 
@@ -95,9 +87,12 @@ CREATE TABLE `food_items` (
 --
 
 INSERT INTO `food_items` (`food_item_id`, `food_court_id`, `food_name`, `description`, `price`, `category`, `stall_id`, `image_path`, `buy_count`) VALUES
-(7, 1, 'Steamed Chicken Rice', '', 1.50, NULL, 1, NULL, NULL),
-(9, 2, 'Nasi Padang', NULL, 2.50, NULL, 5, NULL, NULL),
-(10, 1, 'Roasted Chicken Rice', '', 2.50, NULL, 1, NULL, NULL);
+(7, 1, 'Steamed Chicken Rice', '', 1.50, NULL, 1, '../uploads/Steamed_Chicken_Rice.jpg', NULL),
+(9, 2, 'Nasi Padang', '', 2.50, NULL, 5, '../uploads/nasi-padang.jpg', NULL),
+(10, 1, 'Roasted Chicken Rice', '', 2.50, NULL, 1, NULL, NULL),
+(16, 1, 'Soup', '', 1.00, NULL, 1, NULL, NULL),
+(17, 1, '1/2 Chicken', '', 8.00, NULL, 1, NULL, NULL),
+(18, 1, 'Chicken Rice Value Set', '', 4.00, NULL, 1, '../uploads/unknown_food.jpg', NULL);
 
 -- --------------------------------------------------------
 
@@ -122,7 +117,7 @@ CREATE TABLE `food_stalls` (
 --
 
 INSERT INTO `food_stalls` (`stall_id`, `stall_name`, `food_court_id`, `contact_number`, `availability`, `opening_time`, `closing_time`, `description`, `stall_picture`) VALUES
-(1, 'Chicken Rice', 1, NULL, 'Open', '11:00:00', '17:00:00', NULL, '../assets/hainanese-chicken-rice.jpg'),
+(1, 'Chicken Rice', 1, NULL, 'Open', '11:00:00', '17:00:00', NULL, NULL),
 (5, 'Nasi Padang', 2, NULL, 'Open', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
@@ -161,10 +156,9 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`order_id`, `user_id`, `total_amount`, `status`, `payment_method`, `order_date`, `tracking_id`, `reason`) VALUES
-(20, 1, 1.50, 'Pending', 'Credit Card', '2025-01-29 05:38:56', 'ORDER_67994E705A2CE', NULL),
-(21, 1, 4.00, 'Pending', 'Credit Card', '2025-01-29 05:55:39', 'ORDER_6799525B4029E', NULL),
-(22, 1, 1.50, 'Cancelled', 'Credit Card', '2025-01-29 06:01:14', 'ORDER_679953AA65D08', 'NA'),
-(23, 1, 2.50, 'Pending', 'Credit Card', '2025-01-29 06:01:18', 'ORDER_679953AEE6F91', NULL);
+(43, 1, 2.50, 'Completed', 'Credit Card', '2025-01-31 01:55:53', 'ORDER_679BBD2980C2D', NULL),
+(44, 1, 3.00, 'Completed', 'Credit Card', '2025-01-31 01:58:01', 'ORDER_679BBDA905A12', NULL),
+(45, 1, 1.50, 'Pending', 'Credit Card', '2025-01-31 02:13:21', 'ORDER_679BC141EDFE5', NULL);
 
 -- --------------------------------------------------------
 
@@ -185,8 +179,9 @@ CREATE TABLE `order_items` (
 --
 
 INSERT INTO `order_items` (`order_item_id`, `order_id`, `food_item_id`, `quantity`, `price`) VALUES
-(22, 22, 7, 1, 1.50),
-(23, 23, 9, 1, 2.50);
+(45, 43, 9, 1, 2.50),
+(46, 44, 7, 2, 1.50),
+(47, 45, 7, 1, 1.50);
 
 -- --------------------------------------------------------
 
@@ -212,7 +207,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `phone`, `profile_picture`, `account_balance`, `roles`, `stall_id`, `food_court_id`) VALUES
-(1, 'test', 'test@example.com', '$2y$10$0UDqRcrXtf6UUuE/ZU9/me94orx4iNwFPZTFyid.yAam06HP7G46S', '12345', '../uploads/profile_pic.jpg', 6.50, 'customer', NULL, NULL),
+(1, 'test', 'test@example.com', '$2y$10$0UDqRcrXtf6UUuE/ZU9/me94orx4iNwFPZTFyid.yAam06HP7G46S', '12345', '../uploads/profile_pic.jpg', 38.50, 'customer', NULL, NULL),
 (2, 'test2', '', '$2y$10$0UDqRcrXtf6UUuE/ZU9/me94orx4iNwFPZTFyid.yAam06HP7G46S', NULL, NULL, NULL, 'vendor', 1, 1),
 (5, 'test3', 'aa', '$2y$10$0UDqRcrXtf6UUuE/ZU9/me94orx4iNwFPZTFyid.yAam06HP7G46S', NULL, NULL, 0.00, 'customer', NULL, NULL),
 (7, 'test4', 'tt', '$2y$10$0UDqRcrXtf6UUuE/ZU9/me94orx4iNwFPZTFyid.yAam06HP7G46S', NULL, NULL, 0.00, 'vendor', 5, 2);
@@ -290,7 +285,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `account_topups`
 --
 ALTER TABLE `account_topups`
-  MODIFY `topup_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `topup_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `food_courts`
@@ -302,7 +297,7 @@ ALTER TABLE `food_courts`
 -- AUTO_INCREMENT for table `food_items`
 --
 ALTER TABLE `food_items`
-  MODIFY `food_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `food_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `food_stalls`
@@ -320,13 +315,13 @@ ALTER TABLE `most_ordered`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `users`
