@@ -15,6 +15,7 @@ $user = $result->fetch_assoc();
 
 $stall_id = $user['stall_id'] ?? 0;
 $food_court_id = $user['food_court_id'] ?? 0;
+$stall_picture = $result->fetch_assoc()['stall_picture'] ?? ''; // Default to an empty string if not set
 
 // Fetch sales metrics
 $totalSales = getTotalSales($conn, $stall_id, $food_court_id);
@@ -55,194 +56,263 @@ $stall_image = $stall_info['stall_picture'] ?? '';
         }
     </script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f8f8;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        header nav a {
-            color: white;
-            margin: 0 15px;
-            text-decoration: none;
-        }
-        header nav a:hover {
-            text-decoration: underline;
-        }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f8f8;
+    }
+    header {
+        background-color: #333;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+    header nav a {
+        color: white;
+        margin: 0 15px;
+        text-decoration: none;
+    }
+    header nav a:hover {
+        text-decoration: underline;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            
-        }
+    .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-        .widget {
-            display: inline-block;
-            width: 30%;
-            padding: 20px;
-            margin: 10px;
-            background: #f4f4f4;
-            border-radius: 8px;
-            text-align: center;
-            margin-left: 100px
-            
-        }
+    .widget {
+        display: inline-block;
+        width: 30%;
+        padding: 20px;
+        margin: 10px;
+        background: #f4f4f4;
+        border-radius: 8px;
+        text-align: center;
+        margin-left: 100px
+    }
 
-        .widget h3 {
-            margin: 0 0 10px;
-            color: #444;
-        }
+    .widget h3 {
+        margin: 0 0 10px;
+        color: #444;
+    }
 
-        .widget p {
-            font-size: 1.2em;
-            margin: 0;
-        }
+    .widget p {
+        font-size: 1.2em;
+        margin: 0;
+    }
 
-        .stall-items {
-            margin-top: 30px;
-        }
+    .stall-items {
+        margin-top: 30px;
+    }
 
-        .stall-items table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    .stall-items table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-        .stall-items th, .stall-items td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
+    .stall-items th, .stall-items td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+    }
 
-        .stall-items th {
-            background-color: #f4f4f4;
-        }
+    .stall-items th {
+        background-color: #f4f4f4;
+    }
 
-        .stall-items tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+    .stall-items tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
 
-        .edit-form, .add-form {
-            margin-top: 20px;
-            display: none;
-        }
+    /* Updated CSS for smooth transition of add-form and edit-form */
+    .edit-form, .add-form {
+        margin-top: 20px;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        padding: 0;
+        transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out;
+    }
 
-        .edit-form input, .edit-form textarea, .add-form input, .add-form textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
+    .edit-form.show, .add-form.show {
+        max-height: 500px; /* Adjust as needed */
+        opacity: 1;
+        padding: 10px; /* Restores padding */
+    }
 
-        .edit-form button, .add-form button {
-            padding: 10px 20px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+    .edit-form input, .edit-form textarea, .add-form input, .add-form textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
 
-        .edit-form button:hover, .add-form button:hover {
-            background-color: #555;
-        }
-                footer {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-                .stall-config {
-            margin-top: 30px;
-            background-color: #f4f4f4;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+    .edit-form button, .add-form button {
+        padding: 10px 20px;
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
-        .stall-config h2 {
-            margin-bottom: 20px;
-        }
+    .edit-form button:hover, .add-form button:hover {
+        background-color: #555;
+    }
 
-        .stall-config input[type="text"],
-        .stall-config textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
+    footer {
+        background-color: #333;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
 
-        .stall-config input[type="file"] {
-            margin: 5px 0;
-        }
+    .stall-config h2 {
+        margin-bottom: 20px;
+    }
 
-        .stall-config img {
-            max-width: 200px;
-            display: block;
-            margin-top: 10px;
-        }
+    .stall-config input[type="text"],
+    .stall-config textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
 
-        .stall-config button {
-            padding: 10px 20px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+    .stall-config input[type="file"] {
+        margin: 5px 0;
+    }
 
-        .stall-config button:hover {
-            background-color: #555;
-        }
+    .stall-config img {
+        max-width: 200px;
+        display: block;
+        margin-top: 10px;
+    }
 
-        footer a {
-            color: white;
-            margin: 0 10px;
-            text-decoration: none;
-        }
+    .stall-config button {
+        padding: 10px 20px;
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .stall-config button:hover {
+        background-color: #555;
+    }
+
+    #stallConfig {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out;
+    }
+
+    #stallConfig.show {
+        max-height: 500px; /* Adjust as needed */
+    }
+
+    footer a {
+        color: white;
+        margin: 0 10px;
+        text-decoration: none;
+    }
+
     </style>
     <script>
-        function showEditForm(itemId, foodName, description, price, imageUrl) {
-            document.getElementById('edit-form').style.display = 'block';
-            document.getElementById('item_id').value = itemId;
-            document.getElementById('food_name').value = foodName;
-            document.getElementById('description').value = description;
-            document.getElementById('price').value = price;
+    function toggleSection(sectionId) {
+        let sections = ['edit-form', 'add-form', 'stallConfig'];
 
-            // Display existing image if available
-            if (imageUrl) {
-                document.getElementById('imagePreview').src = imageUrl;
-                document.getElementById('imagePreview').style.display = 'block';
+        sections.forEach(id => {
+            let section = document.getElementById(id);
+
+            if (id === sectionId) {
+                // Toggle the selected section
+                if (sectionId === 'stallConfig') {
+                    section.classList.toggle("show");
+                } else {
+                    section.classList.toggle("show");
+                }
             } else {
-                document.getElementById('imagePreview').style.display = 'none';
+                    section.classList.remove("show");
             }
-        }
+        });
+    }
 
-        function showAddForm() {
-            document.getElementById('add-form').style.display = 'block';
-        }
-        function previewImage(event) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const preview = document.getElementById('imagePreview');
-                preview.src = reader.result;
-                preview.style.display = 'block';
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        }
+    function showEditForm(itemId, foodName, description, price, imageUrl) {
+        toggleSection('edit-form');
 
-    </script>
+        document.getElementById('item_id').value = itemId;
+        document.getElementById('food_name').value = foodName;
+        document.getElementById('description').value = description;
+        document.getElementById('price').value = price;
+
+        if (imageUrl) {
+            document.getElementById('imagePreview').src = imageUrl;
+            document.getElementById('imagePreview').style.display = 'block';
+        } else {
+            document.getElementById('imagePreview').style.display = 'none';
+        }
+    }
+
+    function showAddForm() {
+        toggleSection('add-form');
+    }
+
+    function toggleConfig() {
+        toggleSection('stallConfig');
+    }
+
+    function previewImage(event, formType) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            let preview;
+
+            // Depending on the form type, select the corresponding image preview element
+            if (formType === 'edit') {
+                preview = document.getElementById('editItemImagePreview');
+            } else if (formType === 'add') {
+                preview = document.getElementById('addItemImagePreview');
+            } else if (formType === 'stall') {
+                preview = document.getElementById('stallImagePreview');
+            }
+
+            // Set the preview image
+            preview.src = reader.result;
+            preview.style.display = 'block'; // Display the image once selected
+        };
+
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    // Close all forms when clicking outside (but not on a button)
+    document.addEventListener("click", function(event) {
+        let sections = ['edit-form', 'add-form', 'stallConfig'];
+        let clickedInsideForm = sections.some(id => document.getElementById(id)?.contains(event.target));
+        let clickedButton = event.target.matches("button");
+
+        if (!clickedInsideForm && !clickedButton) {
+            sections.forEach(id => {
+                let section = document.getElementById(id);
+                if (section) {
+                    if (id === 'stallConfig') {
+                        section.classList.remove("show");
+                    } else {
+                        section.classList.remove("show");
+                    }
+                }
+            });
+        }
+    });
+</script>
 </head>
 <body>
     <header>
@@ -267,8 +337,10 @@ $stall_image = $stall_info['stall_picture'] ?? '';
             <h3>Total Refunds</h3>
             <p style="color: red">$<?= number_format($getTotalRefunds, 2) ?></p>
         </div>
-        <div class="stall-config">
-            <h2>Configure Stall</h2>
+        
+        <h2>Configure Stall</h2>
+        <button onclick="toggleSection('stallConfig')">Configure</button>
+        <div id="stallConfig" class="stall-config">
             <form action="update_stall.php" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="stall_id" value="<?= $stall_id ?>">
 
@@ -276,17 +348,35 @@ $stall_image = $stall_info['stall_picture'] ?? '';
                 <input type="text" id="stall_name" name="stall_name" value="<?= htmlspecialchars($stall_name) ?>" required>
 
                 <label for="stall_picture">Stall Picture:</label>
-                <input type="file" id="stall_picture" name="stall_picture" accept="image/*" onchange="previewImage(event)">
+                <input type="file" id="stall_picture" name="stall_picture" accept="image/*" onchange="previewImage(event, 'stall')">
 
                 <!-- Image Preview -->
-                <img id="imagePreview" src="<?= $stall_picture ? '../images/' . $stall_picture : '' ?>" alt="Stall Image Preview" style="max-width: 200px; display: <?= $stall_picture ? 'block' : 'none' ?>; margin-top: 10px;">
-
+                <img id="imagePreview" src="<?= $stall_picture ? '../images/' . $stall_picture : '' ?>" 
+                     style="max-width: 200px; max-height: 100px; display: <?= $stall_picture ? 'block' : 'none' ?>; margin-top: 10px;">
                 <button type="submit">Update Stall</button>
             </form>
         </div>
         <div class="stall-items">
             <h2>Stall Items</h2>
-            <button onclick="showAddForm()">Add New Item</button>
+            <button onclick="toggleSection('add-form')">Add New Item</button>
+        <div id="add-form" class="add-form">
+            <h2>Add New Item</h2>
+            <form action="add_item.php" method="post">
+                <input type="hidden" name="stall_id" value="<?= $stall_id ?>">
+                <label for="new_food_name">Food Name:</label>
+                <input type="text" id="new_food_name" name="food_name" required>
+                <label for="new_description">Description:</label>
+                <textarea id="new_description" name="description"></textarea>
+                <label for="new_price">Price:</label>
+                <input type="number" id="new_price" name="price" step="0.01" required>
+                <label for="image">Upload New Image:</label>
+                <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event, 'add')">
+                <!-- Image Preview for Add Item -->
+                <img id="addItemImagePreview" src="" alt="Food Image Preview" style="max-width: 200px; max-height: 100px;display: none; margin-top: 10px;">
+                <button type="submit">Add Item</button>
+            </form>
+            <br>
+        </div>
             <table>
                 <thead>
                     <tr>
@@ -328,29 +418,17 @@ $stall_image = $stall_info['stall_picture'] ?? '';
 
             <!-- Image Upload -->
             <label for="image">Upload New Image:</label>
-            <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)">
+            <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event, 'edit')">
 
-            <!-- Image Preview -->
-            <img id="imagePreview" src="" alt="Food Image Preview" style="max-width: 200px; display: none; margin-top: 10px;">
+
+            <!-- Image Preview for Edit Item -->
+            <img id="editItemImagePreview" src="" alt="Food Image Preview" style="max-width: 200px;  max-height: 100px; display: none; margin-top: 10px;">
+
 
             <button type="submit">Update Item</button>
             <button type="submit" onclick="deleteItem()">Delete item</button>
         </form>
     </div>
-
-        <div id="add-form" class="add-form">
-            <h2>Add New Item</h2>
-            <form action="add_item.php" method="post">
-                <input type="hidden" name="stall_id" value="<?= $stall_id ?>">
-                <label for="new_food_name">Food Name:</label>
-                <input type="text" id="new_food_name" name="food_name" required>
-                <label for="new_description">Description:</label>
-                <textarea id="new_description" name="description"></textarea>
-                <label for="new_price">Price:</label>
-                <input type="number" id="new_price" name="price" step="0.01" required>
-                <button type="submit">Add Item</button>
-            </form>
-        </div>
     </div>
 
 <?php echo $foot; // Display the footer  ?>
