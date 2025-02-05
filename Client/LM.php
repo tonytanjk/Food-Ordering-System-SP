@@ -2,7 +2,6 @@
 <?php 
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
-echo $main_head;
 ?>
 <!DOCTYPE html>
 <!--
@@ -31,7 +30,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <body>
          <div class="container">
         <h1>Learn More</h1>
-        <p>By : Tony Ernest Erika Emma.</p>
+        <p>Discover more about what we have to offer.</p>
         </div>
     </body>
         <footer>

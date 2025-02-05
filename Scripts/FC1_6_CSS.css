@@ -209,7 +209,7 @@
 
     .cart-summary {
         position: absolute;
-        left: 10px;
+        left: -250px;
         top: 20px;
         background-color: #fff;
         border-radius: 8px;
@@ -217,6 +217,7 @@
         padding: 15px;
         width: 250px;
         font-size: 14px;
+        transition: left 0.3s ease-in-out;
     }
 
     .cart-summary h2 {

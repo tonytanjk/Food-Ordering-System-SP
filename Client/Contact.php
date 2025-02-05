@@ -1,7 +1,9 @@
 <?php 
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/Account.php';
-echo $account, $main_head;
+include $_SERVER['DOCUMENT_ROOT'] .  '/projectCSAD/Vendor/VendorCommon.php';
+
+echo $account,$main_head;
 ?>
 
 <!DOCTYPE html>
@@ -174,6 +176,37 @@ echo $account, $main_head;
         .contactForm .inputBox input[type="submit"]:hover {
             background: #019da8;
         }
+        
+        @media (max-width: 400px) {
+        .contact {
+            padding: 20px; /* Reduce padding for small screens */
+            background-size: cover;
+    }
+
+        .container {
+            flex-direction: column; /* Stack elements vertically */
+            align-items: center;
+    }
+
+        .contactInfo {
+            width: 100%; /* Take full width */
+            text-align: center; /* Center align text */
+    }
+
+        .contactInfo .box {
+            justify-content: center;
+    }
+
+        .contactForm {
+            width: 100%; /* Full width */
+            padding: 20px; /* Reduce padding */
+    }
+
+        .contactForm .inputBox input,
+        .contactForm .inputBox textarea {
+            font-size: 14px; /* Adjust font size */
+    }
+}
 
     </style>
 </head>
@@ -209,11 +242,11 @@ echo $account, $main_head;
             </div>
 
             <div class="contactForm">
-                <form action="https://api.web3forms.com/submit" method="POST">
-                    <input type="hidden" name="access_key" value="d82c9256-27b0-4ad7-b369-1598033bf698">
+                <form action="https://api.web3forms.com/submit" method="post">
+                    <input type="hidden" name="access_key" value="d82c9256-27b0-4ad7-b369-1598033bf698"
                     <h2>Send Message</h2>
                     <div class="inputBox">
-                        <input type="text" name="name" required="required">
+                        <input type="text" name="full_name" required="required">
                         <span>Full Name</span>
                     </div>
 
@@ -228,15 +261,12 @@ echo $account, $main_head;
                     </div>
 
                     <div class="inputBox">
-                        <input type="submit" value="Submit">
+                        <input type="submit" value="Send">
                     </div>
                 </form>
             </div>
         </div>
     </section>
-    <footer>
-        <p>&copy; 2025 Food Courts</p>
-        <p><a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
-    </footer>
+    <?php echo $foot; // Display the footer  ?>
 </body>
 </html>

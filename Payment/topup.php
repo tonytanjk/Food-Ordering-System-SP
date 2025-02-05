@@ -1,80 +1,33 @@
 <?php
 session_start();
+include $_SERVER['DOCUMENT_ROOT'] . '/projectCSAD/Scripts/common.php';
 
-// Database connection
-$host = 'localhost';
-$db = 'projectcsad';
-$user = 'root';
-$pass = '';
-$conn = new mysqli($host, $user, $pass, $db);
+$user_id = $_SESSION['user_id'];
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $topup_amount = isset($_POST['total_amount']) ? floatval($_POST['total_amount']) : 0;
+    $payment_method = isset($_POST['payment_method']) ? $_POST['payment_method'] : '';
 
-// Initialize error and success messages
-$error_message = '';
-$success_message = '';
+    if ($topup_amount > 0 && !empty($payment_method)) {
+        // Insert top-up record into `account_topups` table
+        $stmt = $pdo->prepare("INSERT INTO account_topups (user_id, topup_amount, payment_method, status) VALUES (:user_id, :topup_amount, :payment_method, 'completed')");
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':topup_amount', $topup_amount);
+        $stmt->bindParam(':payment_method', $payment_method);
+        $stmt->execute();
 
-// Fetch form data if the user submitted the top-up request
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Fetch user ID and top-up amount
-    $user_id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
-    $top_up_amount = isset($_POST['amount']) ? (float)$_POST['amount'] : 0;
+        // Update user's account balance
+        $stmt = $pdo->prepare("UPDATE users SET account_balance = account_balance + :topup_amount WHERE user_id = :user_id");
+        $stmt->bindParam(':topup_amount', $topup_amount);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
 
-    // Validate inputs
-    if ($user_id <= 0 || $top_up_amount <= 0) {
-        $error_message = "Invalid user or amount.";
+        $success_message = "Your account has been topped up by \$$topup_amount using $payment_method!";
     } else {
-        // Fetch the user's current balance
-        $sql = "SELECT account_balance FROM users WHERE user_id = ?";
-        $stmt = $conn->prepare($sql);
-        if ($stmt) {
-            $stmt->bind_param("i", $user_id);
-            $stmt->execute();
-            $result = $stmt->get_result();
-
-            if ($result->num_rows === 0) {
-                $error_message = "User not found.";
-            } else {
-                $row = $result->fetch_assoc();
-                $current_balance = (float)$row['account_balance'];
-
-                // Add the top-up amount to the user's current balance
-                $new_balance = $current_balance + $top_up_amount;
-
-                // Update the user's balance in the database
-                $sql = "UPDATE users SET account_balance = ? WHERE user_id = ?";
-                $stmt = $conn->prepare($sql);
-                if ($stmt) {
-                    $stmt->bind_param("di", $new_balance, $user_id);
-
-                    if ($stmt->execute()) {
-                        // Success message
-                        $success_message = "Top-up successful! Your new balance is $" . number_format($new_balance, 2);
-
-                        // Redirect back to the checkout page
-                        header("Location: checkout.php");
-                        exit(); // Ensure that the script stops execution after the redirect
-                    } else {
-                        $error_message = "Error processing top-up.";
-                    }
-                } else {
-                    $error_message = "Error preparing the update query.";
-                }
-            }
-
-            // Close the statement
-            $stmt->close();
-        } else {
-            $error_message = "Error preparing the balance query.";
-        }
+        $error_message = "Please select a valid amount and payment method.";
     }
 }
-
-// Close connection
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -84,110 +37,173 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Up Account</title>
     <style>
+        /* Same styles as before */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .topup-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .topup-container h1 {
+            margin-bottom: 20px;
             color: #333;
         }
-
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #444;
-        }
-
-        .message {
-            text-align: center;
-            margin: 20px 0;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        label {
+        .amount-buttons button, .amount-buttons input[type="number"] {
+            margin: 5px;
+            padding: 10px 20px;
             font-size: 16px;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            font-size: 16px;
+            border: 1px solid #007bff;
             border-radius: 5px;
-            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
-
-        button {
-            display: block;
-            width: 100%;
+        .amount-buttons button {
             background-color: #007bff;
             color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
         }
-
-        button:hover {
+        .amount-buttons button:hover {
             background-color: #0056b3;
         }
-
-        footer {
+        .amount-buttons input[type="number"] {
+            width: 100px;
             text-align: center;
-            margin-top: 40px;
-            color: #aaa;
+        }
+        .total-display {
+            margin: 20px 0;
+            font-size: 18px;
+            color: #333;
+        }
+        select.payment-method {
+            margin: 10px 0 20px 0;
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button.topup-submit, a.back-home {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button.topup-submit {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+        button.topup-submit:hover {
+            background-color: #218838;
+        }
+        a.back-home {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+        a.back-home:hover {
+            background-color: #5a6268;
+        }
+        .message {
+            margin-top: 15px;
+            font-size: 16px;
+        }
+        .message.success {
+            color: #28a745;
+        }
+        .message.error {
+            color: #dc3545;
         }
     </style>
+    <script>
+        let totalAmount = 0;
+
+        function addAmount(amount) {
+            totalAmount += amount;
+            updateDisplay();
+        }
+
+        function subtractAmount(amount) {
+            if (totalAmount - amount >= 0) {
+                totalAmount -= amount;
+            } else {
+                alert("Amount cannot be less than $0!");
+            }
+            updateDisplay();
+        }
+
+        function addCustomAmount() {
+            const customAmountInput = document.getElementById('customAmount');
+            const customAmount = parseFloat(customAmountInput.value);
+            if (!isNaN(customAmount) && customAmount > 0) {
+                totalAmount = customAmount;
+                updateDisplay();
+                customAmountInput.value = '';
+            } else {
+                alert("Please enter a valid amount.");
+            }
+        }
+
+        function updateDisplay() {
+            document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+            document.getElementById('totalInput').value = totalAmount.toFixed(2);
+        }
+    </script>
 </head>
 <body>
-    <div class="container">
+    <div class="topup-container">
         <h1>Top Up Your Account</h1>
-
-        <!-- Success or Error Message Display -->
-        <?php if (!empty($success_message)): ?>
-            <div class="message success">
-                <?php echo $success_message; ?>
-            </div>
-        <?php elseif (!empty($error_message)): ?>
-            <div class="message error">
-                <?php echo $error_message; ?>
-            </div>
-        <?php endif; ?>
-
-        <!-- Top Up Form -->
-        <form action="topup.php" method="post">
-            <label for="amount">Top Up Amount ($)</label>
-            <input type="number" name="amount" id="amount" step="0.01" min="1" required>
-            <button type="submit">Top Up</button>
+        <div class="amount-buttons">
+            <button onclick="addAmount(10)">+ $10</button>
+            <button onclick="addAmount(20)">+ $20</button>
+            <button onclick="addAmount(30)">+ $30</button>
+            <button onclick="addAmount(40)">+ $40</button>
+            <button onclick="addAmount(50)">+ $50</button>
+            <button onclick="subtractAmount(10)">- $10</button>
+            <button onclick="subtractAmount(20)">- $20</button>
+            <button onclick="subtractAmount(30)">- $30</button>
+            <button onclick="subtractAmount(40)">- $40</button>
+            <button onclick="subtractAmount(50)">- $50</button>
+        </div>
+        <div class="amount-buttons">
+            <input type="number" id="customAmount" placeholder="Custom Amount">
+            <button onclick="addCustomAmount()">Add Custom</button>
+        </div>
+        <div class="total-display">
+            Total Amount: $<span id="totalAmount">0.00</span>
+        </div>
+        <form action="" method="post">
+            <input type="hidden" id="totalInput" name="total_amount" value="0.00">
+            <select name="payment_method" class="payment-method" required>
+                <option value="">Select Payment Method</option>
+                <option value="Credit Card">Credit Card</option>
+                <option value="PayPal">PayPal</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+            <button type="submit" class="topup-submit">Top Up</button>
         </form>
+        <a href="/ProjectCSAD/home.php" class="back-home">Back to Home</a>
+        <?php if (isset($success_message)): ?>
+            <p class="message success"><?php echo $success_message; ?></p>
+        <?php elseif (isset($error_message)): ?>
+            <p class="message error"><?php echo $error_message; ?></p>
+        <?php endif; ?>
     </div>
-
-    <footer>
-        <p>&copy; 2025 Food Courts</p>
-    </footer>
 </body>
 </html>

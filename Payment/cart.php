@@ -60,155 +60,211 @@ foreach ($_SESSION['cart'] as $item) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
 
+    .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 50px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .total-price {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 20px;
+        text-align: right;
+    }
+
+    .checkout-btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background-color: #28a745;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-top: 15px;
+        cursor: pointer;
+    }
+
+    .checkout-btn:hover {
+        background-color: #218838;
+    }
+
+    .empty-cart {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 18px;
+    }
+
+    .cart-item-form {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .cart-item-form input[type="number"] {
+        width: 60px;
+        padding: 8px;
+        font-size: 14px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    .cart-item-form button[type="submit"] {
+        padding: 8px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-item-form button[type="submit"]:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .cart-item-form button[type="submit"]:active {
+        background-color: #004085;
+        transform: scale(1);
+    }
+
+    .remove-btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 15px;
+        cursor: pointer;
+    }
+
+    .remove-btn:hover {
+        background-color: #c82333;
+    }
+
+    .back-to-menu-btn {
+        display: inline-block;
+        margin-bottom: 20px;
+        padding: 12px 20px;
+        background-color: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-to-menu-btn:hover {
+        background-color: #5a6268;
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-to-menu-btn:active {
+        background-color: #4e555b;
+        transform: scale(1);
+    }
+
+    /* Media Queries for Responsive Design */
+    @media (max-width: 768px) {
         .container {
-            width: 80%;
-            margin: 50px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            margin: 20px auto;
         }
 
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #007bff;
-            color: #fff;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .total-price {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 20px;
-            text-align: right;
-        }
-
-        .checkout-btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: #28a745;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-            margin-top: 15px;
-            cursor: pointer;
-        }
-
-        .checkout-btn:hover {
-            background-color: #218838;
-        }
-
-        .empty-cart {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 18px;
+        table, th, td {
+            font-size: 14px;
         }
 
         .cart-item-form {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
-        .cart-item-form input[type="number"] {
-            width: 60px;
-            padding: 8px;
-            font-size: 14px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-
+        .cart-item-form input[type="number"],
         .cart-item-form button[type="submit"] {
-            padding: 8px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            width: 100%;
         }
 
-        .cart-item-form button[type="submit"]:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .cart-item-form button[type="submit"]:active {
-            background-color: #004085;
-            transform: scale(1);
-        }
-
-        .remove-btn {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 8px 15px;
-            cursor: pointer;
-        }
-
-        .remove-btn:hover {
-            background-color: #c82333;
-        }
-        .back-to-menu-btn {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 12px 20px;
-            background-color: #6c757d; /* Gray background */
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
+        .total-price {
             text-align: center;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .back-to-menu-btn:hover {
-            background-color: #5a6268; /* Darker gray when hovered */
-            transform: scale(1.05); /* Slightly enlarge the button on hover */
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        .checkout-btn {
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        th, td {
+            font-size: 12px;
+            padding: 8px;
         }
 
-        .back-to-menu-btn:active {
-            background-color: #4e555b; /* Darkest gray when clicked */
-            transform: scale(1); /* Reset size on click */
+        .checkout-btn {
+            padding: 10px;
+            font-size: 12px;
         }
-    </style>
+
+        .remove-btn, .cart-item-form button[type="submit"] {
+            font-size: 12px;
+            padding: 6px 10px;
+        }
+
+        .back-to-menu-btn {
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+    }
+</style>
+
 </head>
 <body>
     <div class="container">
@@ -253,8 +309,8 @@ foreach ($_SESSION['cart'] as $item) {
                 <div class="total-price">
                     Total Price: $<?= number_format($total_price, 2) ?>
                 </div>
-                <form action="payment.php" method="POST">
-                    <button type="submit" class="checkout-btn" name="checkout">Proceed to Checkout</button>
+                <form action="ProcessPayment.php" method="POST">
+                    <button type="submit" class="checkout-btn" name="checkout">Proceed to Payment</button>
                 </form>
             <?php else: ?>
                 <div class="empty-cart">

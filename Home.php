@@ -2,6 +2,8 @@
 // Include database connection file
 include 'Scripts/common.php';
 include 'Scripts/Account.php';
+include $_SERVER['DOCUMENT_ROOT'] .  '/projectCSAD/Vendor/VendorCommon.php';
+
 echo $account,$main_head;
 ?>
 <!DOCTYPE html>
@@ -11,109 +13,198 @@ echo $account,$main_head;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Ordering System @ SP</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f8f8;
-        }
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+}
 
-        header {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
+header {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
 
-        header nav a {
-            color: white;
-            margin: 0 15px;
-            text-decoration: none;
-        }
+header nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+}
 
-        header nav a:hover {
-            text-decoration: underline;
-        }
+header nav a:hover {
+    text-decoration: underline;
+}
 
-        .hero {
-            background-image: linear-gradient(to bottom, grey, red);
-            height: 400px;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-align: center;
-            font-size: 48px;
-            font-weight: bold;
-        }
+.hero {
+    background-image: linear-gradient(to bottom, grey, red);
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    font-size: 36px;
+    font-weight: bold;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
 
-        .hero h1 {
-            margin: 0;
-        }
+.section-title {
+    text-align: center;
+    font-size: 24px;
+    margin-top: 20px;
+    color: #333;
+}
 
-        .section-title {
-            text-align: center;
-            font-size: 28px;
-            margin-top: 40px;
-            color: #333;
-        }
+.card-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 10px;
+    gap: 10px;
+}
 
-        .card-container {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px;
-            flex-wrap: wrap;
-        }
+.card {
+    flex: 1 1 300px;
+    background-color: white;
+    max-width: 300px;
+    margin: 10px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
 
-        .card {
-            flex: 0 0 25%;
-            background-color: white;
-            width: 280px;
-            margin: 10px;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
+.card:hover {
+    transform: translateY(-5px);
+}
 
-        .card:hover {
-            transform: translateY(-5px);
-        }
+.card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+}
 
-        .card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
+.card h3 {
+    font-size: 20px;
+    color: #333;
+    margin: 10px 0;
+}
 
-        .card h3 {
-            font-size: 22px;
-            color: #333;
-            margin: 10px 0;
-        }
+.card p {
+    font-size: 14px;
+    color: #555;
+}
 
-        .card p {
-            font-size: 16px;
-            color: #555;
-        }
+.card a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+}
 
-        .card a {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
+.card a:hover {
+    background-color: #45a049;
+}
 
-        .card a:hover {
-            background-color: #45a049;
-        }
+.side-section {
+    position: fixed;
+    top: 20px;
+    right: -250px;
+    width: 250px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    transition: right 0.3s ease-in-out;
+}
+
+.side-section:hover {
+    right: 20px;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+footer a {
+    color: white;
+    margin: 0 10px;
+    text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero {
+        font-size: 28px;
+        height: 300px;
+    }
+
+    .section-title {
+        font-size: 22px;
+    }
+
+    .card {
+        flex: 1 1 45%;
+        max-width: 100%;
+    }
+
+    .card-container {
+        gap: 15px;
+        margin: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        font-size: 24px;
+        height: 250px;
+        padding: 0 10px;
+    }
+
+    .section-title {
+        font-size: 20px;
+        margin-top: 10px;
+    }
+
+    .card {
+        flex: 1 1 90%;
+        max-width: 100%;
+        margin: 5px;
+    }
+
+    .card img {
+        height: 150px;
+    }
+
+    .card h3 {
+        font-size: 18px;
+    }
+
+    .card p {
+        font-size: 12px;
+    }
+
+    .card a {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}
+
         /* Side Section (Initially hidden) */
         .side-section {
             position: fixed;
@@ -259,34 +350,8 @@ echo $account,$main_head;
     </div>
 </section>
 
-<section>
-    <h2 class="section-title">Most Ordered</h2>
-    <div class="card-container">
-        <div class="card">
-            <img src="./assets/most-ordered1.jpg" alt="Most Ordered 1">
-            <h3>Pizza</h3>
-            <p>Our top choice! Freshly made pizza just for you.</p>
-            <a href="#">Order Now</a>
-        </div>
-        <div class="card">
-            <img src="./assets/most-ordered2.jpg" alt="Most Ordered 2">
-            <h3>Burgers</h3>
-            <p>The best burgers in town. Juicy and satisfying.</p>
-            <a href="#">Order Now</a>
-        </div>
-        <div class="card">
-            <img src="./assets/most-ordered3.jpg" alt="Most Ordered 3">
-            <h3>Sushi</h3>
-            <p>Delicious sushi with fresh ingredients.</p>
-            <a href="#">Order Now</a>
-        </div>
-    </div>
-</section>
+    <?php echo $foot; // Display the footer  ?>
 
-<footer>
-    <p>&copy; 2025 I'm going nuts</p>
-    <p><a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
-</footer>
 
 </body>
 </html>
