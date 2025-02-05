@@ -15,7 +15,7 @@
             justify-content: center;
             height: 100vh;
             background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-                        url('bg.jpg') no-repeat center center/cover;
+                        url('../assets/bg.jpg') no-repeat center center/cover;
             color: #fff;
         }
 
@@ -112,7 +112,7 @@
     <div class="container">
         <!-- Foreground image section -->
         <div class="image-section">
-            <img src="forget_bg.png" alt="Forgot Password Image">
+            <img src="../assets/forget_bg.png" alt="Forgot Password Image">
         </div>
         <!-- Form section -->
         <div class="form-section">

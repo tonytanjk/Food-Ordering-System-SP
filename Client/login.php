@@ -1,13 +1,43 @@
+<?php
+include '../Scripts/db_backup.php';
+
+// Check if form is submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $inputUsername = $_POST['username'];
+    $inputPassword = $_POST['password'];
+
+    // Prepare SQL query
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
+    $stmt->bindParam(':username', $inputUsername);
+    $stmt->execute();
+
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && password_verify($inputPassword, $user['password'])) {
+        // Successful login
+        $_SESSION['user_id'] = $user['user_id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['roles'] = $user['roles']; // Store user role in session
+        // Redirect based on user role
+        if ($user['roles'] === 'customer') {
+            header("Location: ../Home.php");
+        } elseif ($user['roles'] === 'vendor') {
+            header("Location: ../Vendor/vendor_home.php");
+        }
+        exit;
+    } else {
+        // Invalid credentials
+        $error = "Invalid username or password.";
+    }
+}
+
+?>
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edit this template
--->
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food Ordering System @ SP</title>
+    <title>Login</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -18,8 +48,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-                        url('bg.jpg') no-repeat center center/cover;
+            background: linear-gradient(
+                rgba(0, 0, 0, 0.5),
+                rgba(0, 0, 0, 0.5)
+            ), 
+            url('../assets/bg.jpg') no-repeat center center/cover;
             color: #fff;
         }
 
@@ -98,7 +131,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
     <h1 class="title">Food Ordering System @ SP</h1>
     <div class="login-container">
         <h1>Login</h1>
-        <form action="#" method="post">
+        <form action="login.php" method="post">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="Enter your username" required>
 
@@ -106,6 +139,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
             <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
             <button type="submit">Login</button>
+
+            <?php if (isset($error)): ?>
+                <p style="color: red;"><?php echo $error; ?></p>
+            <?php endif; ?>
 
             <div class="forgot-password">
                 <a href="Forget.php">Forgot your password?</a>
