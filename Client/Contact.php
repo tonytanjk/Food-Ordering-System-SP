@@ -176,6 +176,72 @@ echo $account,$main_head;
         .contactForm .inputBox input[type="submit"]:hover {
             background: #019da8;
         }
+
+        /* Media Queries for Responsiveness */
+        @media only screen and (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .container .contactInfo,
+            .contactForm {
+                width: 80%;
+            }
+
+            .contact .content h2 {
+                font-size: 28px;
+            }
+
+            .contact .content p {
+                font-size: 16px;
+            }
+
+            .contactForm h2 {
+                font-size: 24px;
+            }
+
+            .contactForm .inputBox input,
+            .contactForm .inputBox textarea {
+                font-size: 14px;
+            }
+
+            .container .contactInfo .box {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media only screen and (max-width: 480px) {
+            .contact .content h2 {
+                font-size: 24px;
+            }
+
+            .contact .content p {
+                font-size: 14px;
+            }
+
+            .contactForm h2 {
+                font-size: 22px;
+            }
+
+            .contactForm .inputBox input,
+            .contactForm .inputBox textarea {
+                font-size: 14px;
+            }
+
+            .contactForm .inputBox input[type="submit"] {
+                font-size: 16px;
+            }
+
+            .container .contactInfo {
+                width: 100%;
+            }
+
+            .contactForm {
+                width: 100%;
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -210,7 +276,8 @@ echo $account,$main_head;
             </div>
 
             <div class="contactForm">
-                <form action="contact_form_handler.php" method="post">
+                <form action="https://api.web3forms.com/submit" method="post">
+                    <input type="hidden" name="access_key" value="d82c9256-27b0-4ad7-b369-1598033bf698">
                     <h2>Send Message</h2>
                     <div class="inputBox">
                         <input type="text" name="full_name" required="required">

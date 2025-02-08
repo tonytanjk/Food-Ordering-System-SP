@@ -90,6 +90,18 @@ $result = $stmt->get_result();
         .order-button:hover {
             background-color: #45a049;
         }
+                /* Adjust grid layout for different screen sizes */
+        @media (max-width: 1024px) {
+            .most-ordered {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns for medium screens */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .most-ordered {
+                grid-template-columns: 1fr; /* 1 column for small screens */
+            }
+        }
     </style>
 </head>
 <body>
@@ -97,7 +109,6 @@ $result = $stmt->get_result();
         <p>Discover the Most Popular Dishes</p>
     </div>
     <section class="most-ordered">
-        <h2 class="section-title">Most Ordered Foods</h2>
         <?php while ($row = $result->fetch_assoc()): ?>
             <div class="food-item">
                 <div class="food-item-image">

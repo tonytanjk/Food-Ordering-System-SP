@@ -35,17 +35,15 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
             padding: 20px;
             text-align: center;
         }
-
         header nav a {
-            color: white;
-            margin: 0 15px;
-            text-decoration: none;
+        color: white; /* Sets link color to white */
+        text-decoration: none; /* Removes underline from links */
+        margin: 0 15px;
         }
 
-        header nav a:hover {
-            text-decoration: underline;
+        header a:hover {
+            color: #ccc; /* Sets a lighter shade on hover for better UX */
         }
-
         .container {
             width: 80%;
             margin: 20px auto;
@@ -154,60 +152,53 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
     </style>
     <script>
         function showOrderDetails(orderId) {
-    console.log('Fetching details for order ID:', orderId); // Debugging line
+            console.log('Fetching details for order ID:', orderId); // Debugging line
 
-    // Fetch order details using AJAX
-    fetch(`fetch_order_details.php?order_id=${orderId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Order details:', data); // Debugging line
-            const popup = document.getElementById('popup');
-            const overlay = document.getElementById('overlay');
-            const tableBody = document.getElementById('popup-table-body');
-            const reasonContainer = document.getElementById('popup-cancellation-reason'); // New element for reason
+            // Fetch order details using AJAX
+            fetch(`fetch_order_details.php?order_id=${orderId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Order details:', data); // Debugging line
+                    const popup = document.getElementById('popup');
+                    const overlay = document.getElementById('overlay');
+                    const tableBody = document.getElementById('popup-table-body');
 
-            // Clear previous data
-            tableBody.innerHTML = '';
-            reasonContainer.innerHTML = ''; // Clear the cancellation reason container
+                    // Clear previous data
+                    tableBody.innerHTML = '';
 
-            // Handle error from PHP (if any)
-            if (data.error) {
-                alert('Error: ' + data.error);
-                return;
-            }
+                    // Handle error from PHP (if any)
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                        return;
+                    }
 
-            // Populate table with new data (food details)
-            data.items.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.food_name}</td>
-                    <td>${item.quantity}</td>
-                    <td>$${parseFloat(item.price).toFixed(2)}</td>
-                `;
-                tableBody.appendChild(row);
-            });
+                    // Populate table with new data (food details)
+                    data.items.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.food_name}</td>
+                            <td>${item.quantity}</td>
+                            <td>$${parseFloat(item.price).toFixed(2)}</td>
+                            <td>${item.food_court_id}</td>
+                            <td>${item.stall_id}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
 
-            // Check if the order was cancelled and show the reason if available
-            if (data.status === 'Cancelled') {
-                const reason = data.reason ? data.reason : 'No reason provided.';
-                reasonContainer.innerHTML = `<p><strong>Reason for Cancellation:</strong> ${reason}</p>`;
-            }
-
-            // Show the popup and overlay
-            popup.style.display = 'block';
-            overlay.style.display = 'block';
-        })
-        .catch(error => {
-            console.error('Error fetching order details:', error);
-            alert('Error fetching order details: ' + error.message);
-        });
-}
-
+                    // Show the popup and overlay
+                    popup.style.display = 'block';
+                    overlay.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching order details:', error);
+                    alert('Error fetching order details: ' + error.message);
+                });
+        }
 
         function closePopup() {
             const popup = document.getElementById('popup');
@@ -227,7 +218,7 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
         <?php foreach ($orders as $order): ?>
             <div class="order">
                 <div class="order-details">
-                    <p><strong>Order ID:</strong> <?php echo htmlspecialchars($order['tracking_id']); ?></p>
+                    <p><strong>Order ID:</strong> <?php echo htmlspecialchars($order['order_id']); ?></p>
                     <p><strong>Order Date:</strong> <?php echo htmlspecialchars($order['order_date']); ?></p>
                     <p><strong>Status:</strong> <?php echo htmlspecialchars($order['status']); ?></p>
                     <p><strong>Total Cost:</strong> $<?php echo number_format($order['total_amount'], 2); ?></p>
@@ -250,15 +241,14 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                 <th>Food Name</th>
                 <th>Quantity</th>
                 <th>Price</th>
+                <th>Food Court ID</th>
+                <th>Stall ID</th>
             </tr>
         </thead>
         <tbody id="popup-table-body">
             <!-- Order details will be populated here -->
         </tbody>
     </table>
-
-    <!-- Cancellation Reason Section (if applicable) -->
-    <div id="popup-cancellation-reason"></div> <!-- This will display the cancellation reason if applicable -->
 
     <button class="close-btn" onclick="closePopup()">Close</button>
 </div>

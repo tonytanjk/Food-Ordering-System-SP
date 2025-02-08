@@ -62,10 +62,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_order_id'])) {
 // Fetch current and cancelled orders for the logged-in user
 $query = "
     SELECT o.order_id, o.total_amount, o.payment_method, UNIX_TIMESTAMP(o.order_date) AS order_time, o.status, 
-           oi.food_item_id, oi.quantity, oi.price, fi.food_name
+           oi.food_item_id, oi.quantity, oi.price, fi.food_name, 
+           fs.stall_id, fs.food_court_id
     FROM orders o
     JOIN order_items oi ON o.order_id = oi.order_id
     JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+    JOIN food_stalls fs ON fi.stall_id = fs.stall_id
     WHERE o.user_id = ?
     ORDER BY o.order_date DESC";
 $stmt = $conn->prepare($query);
@@ -95,6 +97,7 @@ $result = $stmt->get_result();
             background: white;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
         h2 {
             text-align: center;
@@ -115,6 +118,10 @@ $result = $stmt->get_result();
         .error {
             color: red;
             background-color: #fbe9e7;
+        }
+        .order-table-container {
+            max-height: 400px;
+            overflow-y: auto;
         }
         table {
             width: 100%;
@@ -144,6 +151,35 @@ $result = $stmt->get_result();
         .cancel-btn:hover {
             background-color: #cc0000;
         }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            table th, table td {
+                padding: 8px;
+                font-size: 14px;
+            }
+            .cancel-btn {
+                padding: 4px 8px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            table th, table td {
+                padding: 6px;
+                font-size: 12px;
+            }
+            .cancel-btn {
+                padding: 3px 6px;
+                font-size: 12px;
+            }
+            h2 {
+                font-size: 18px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -158,47 +194,54 @@ $result = $stmt->get_result();
         <div class="message error"><?= htmlspecialchars($error_message) ?></div>
     <?php endif; ?>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Food Item</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Total Amount</th>
-                <th>Payment Method</th>
-                <th>Order Date</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php while ($order = $result->fetch_assoc()): ?>
+    <!-- Scrollable orders container -->
+    <div class="order-table-container">
+        <table>
+            <thead>
                 <tr>
-                    <td><?= htmlspecialchars($order['order_id']) ?></td>
-                    <td><?= htmlspecialchars($order['food_name']) ?></td>
-                    <td><?= htmlspecialchars($order['quantity']) ?></td>
-                    <td>$<?= number_format($order['price'], 2) ?></td>
-                    <td>$<?= number_format($order['total_amount'], 2) ?></td>
-                    <td><?= htmlspecialchars($order['payment_method']) ?></td>
-                    <td><?= date("Y-m-d H:i:s", $order['order_time']) ?></td>
-                    <td><?= htmlspecialchars($order['status']) ?></td>
-                    <td>
-                        <?php if ($order['status'] === 'Pending' && (time() - $order['order_time']) <= 120): ?>
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="cancel_order_id" value="<?= $order['order_id'] ?>">
-                                <button type="submit" class="cancel-btn">Cancel</button>
-                            </form>
-                        <?php elseif($order['status'] === 'Cancelled'): ?>
-                            <span style="color: gray;">Cancelled</span>
-                        <?php else: ?>
-                            <span style="color: red;">Not Allowed</span>
-                        <?php endif; ?>
-                    </td>
+                    <th>Order ID</th>
+                    <th>Food Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total Amount</th>
+                    <th>Payment Method</th>
+                    <th>Order Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
                 </tr>
-            <?php endwhile; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php while ($order = $result->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($order['order_id']) ?></td>
+                        <td>
+                            <?= htmlspecialchars($order['food_name']) ?><br>
+                            <small>Food Court: <?= htmlspecialchars($order['food_court_id']) ?>, Stall: <?= htmlspecialchars($order['stall_id']) ?></small>
+                        </td>
+                        <td><?= htmlspecialchars($order['quantity']) ?></td>
+                        <td>$<?= number_format($order['price'], 2) ?></td>
+                        <td>$<?= number_format($order['total_amount'], 2) ?></td>
+                        <td><?= htmlspecialchars($order['payment_method']) ?></td>
+                        <td><?= date("Y-m-d H:i:s", $order['order_time']) ?></td>
+                        <td><?= htmlspecialchars($order['status']) ?></td>
+                        <td>
+                            <?php if ($order['status'] === 'Pending' && (time() - $order['order_time']) <= 120): ?>
+                                <form method="POST" style="display:inline;">
+                                    <input type="hidden" name="cancel_order_id" value="<?= $order['order_id'] ?>">
+                                    <button type="submit" class="cancel-btn">Cancel</button>
+                                </form>
+                            <?php elseif ($order['status'] === 'Cancelled'): ?>
+                                <span style="color: gray;">Cancelled</span>
+                            <?php else: ?>
+                                <span style="color: red;">Not Allowed</span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
+
 </body>
 </html>

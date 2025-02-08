@@ -13,9 +13,116 @@ echo $account,$main_head;
     <title>Food Court Vendors</title>
     <link rel="stylesheet" href="../Scripts/FC1_6_CSS.css">
     <script src="../Scripts/FC1_6_JS.js"></script>
+    <style>
+        .back-to-menu-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 12px 20px;
+            background-color: #6c757d; /* Gray background */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-to-menu-btn:hover {
+            background-color: #5a6268; /* Darker gray when hovered */
+            transform: scale(1.05); /* Slightly enlarge the button on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-to-menu-btn:active {
+            background-color: #4e555b; /* Darkest gray when clicked */
+            transform: scale(1); /* Reset size on click */
+        }
+
+ /* Cart Summary Styling */
+        .cart-container {
+            position: fixed;
+            top: 0px;
+            left: -260px; /* Initially hidden */
+            width: 250px;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 0px;
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
+        }
+
+        .cart-summary {
+            width: 100%;
+            transition: right 0.3s ease-in-out;
+        }
+
+        .cart-container:hover {
+            left: 0; /* Slide in when hovered */
+        }
+
+        .cart-summary h2 {
+            font-size: 18px;
+            text-align: center;
+            color: #007bff;
+        }
+
+        .cart-items {
+            margin-bottom: 15px;
+        }
+
+        .cart-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .item-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .item-name {
+            color: #333;
+        }
+
+        .item-price {
+            color: #007bff;
+        }
+
+        .item-total {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .cart-total {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+
+        .checkout-btn {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .checkout-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <header>      
+    <header>
+        <div class="cart-container">
         <?php if (!empty($_SESSION['cart'])): ?>
             <div class="cart-summary">
                 <h2>Your Cart</h2>
@@ -43,10 +150,11 @@ echo $account,$main_head;
         <?php else: ?>
             <p>Your cart is empty.</p>
         <?php endif; ?>
+        </div>
     </header>
     <div class="container">
         <h1>Food Court Vendors</h1>
-
+      <a href="javascript:history.back()" class="back-to-menu-btn">Back</a>
         <?php if (!$stall_id && $food_court_id): ?>
             <!-- Display food stalls for the selected food court -->
             <h2>Food Stalls in Food Court #<?= htmlspecialchars($food_court_id) ?></h2>
