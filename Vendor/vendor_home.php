@@ -16,7 +16,8 @@ $user = $result->fetch_assoc();
 $stall_id = $user['stall_id'] ?? 0;
 $food_court_id = $user['food_court_id'] ?? 0;
 $stall_picture = $result->fetch_assoc()['stall_picture'] ?? ''; // Default to an empty string if not set
-
+echo "Stall ID: " . $stall_id;
+echo "Food Court ID: " . $food_court_id;
 // Fetch sales metrics
 $totalSales = getTotalSales($conn, $stall_id, $food_court_id);
 $totalOrders = getTotalOrders($conn, $stall_id, $food_court_id);

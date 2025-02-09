@@ -67,24 +67,23 @@ function getFoodItems($stallId, $conn) {
 }
 
 function getTotalSales($conn, $stall_id, $food_court_id) {
-    $query = "
-        SELECT SUM(o.total_amount) AS total_sales
-        FROM orders o
-        JOIN order_items oi ON o.order_id = oi.order_id
-        JOIN food_items fi ON oi.food_item_id = fi.food_item_id
-        WHERE fi.stall_id = ? AND fi.food_court_id = ? AND o.status = 'Completed'
-    ";
+    $query = "SELECT SUM(oi.price * oi.quantity) AS total_sales
+              FROM order_items oi
+              JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+              JOIN orders o ON oi.order_id = o.order_id
+              WHERE fi.stall_id = ? 
+              AND fi.food_court_id = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("ii", $stall_id, $food_court_id); // Correct parameter order
+    $stmt->bind_param("ii", $stall_id, $food_court_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
-        
-    return $row['total_sales'] ?? 0; // Return total sales or 0 if no sales exist
+    
+    return $row['total_sales'] ?? 0.00;
 }
 
 
-// Function to fetch total orders for a specific food court and stall
+
 function getTotalOrders($conn, $stall_id, $food_court_id) {
     $query = "SELECT COUNT(DISTINCT o.order_id) AS total_orders
               FROM orders o
@@ -102,22 +101,19 @@ function getTotalOrders($conn, $stall_id, $food_court_id) {
     return $row['total_orders'] ?? 0;
 }
 
-// Function to calculate the average order value for a specific food court and stall
 function getAverageOrderValue($conn, $stall_id, $food_court_id) {
     $query = "SELECT AVG(o.total_amount) AS average_order_value
               FROM orders o
-              WHERE o.order_id IN (
-                  SELECT DISTINCT oi.order_id
-                  FROM order_items oi
-                  JOIN food_items fi ON oi.food_item_id = fi.food_item_id
-                  WHERE fi.stall_id = ? AND fi.food_court_id = ?
-              )";
+              JOIN order_items oi ON o.order_id = oi.order_id
+              JOIN food_items fi ON oi.food_item_id = fi.food_item_id
+              JOIN food_stalls fs ON fi.stall_id = fs.stall_id
+              WHERE fs.stall_id = ? AND fs.food_court_id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("ii", $stall_id, $food_court_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
-    return $row['average_order_value'] ?? 0; // Return 0 if no average found
+    return $row['average_order_value'] ?? 0;
 }
 
 // Example function to fetch sales trends for the last 7 days for a specific food court and stall

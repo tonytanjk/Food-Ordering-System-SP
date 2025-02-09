@@ -1,9 +1,9 @@
 <?php
-include '../scripts/common.php'; // Include common.php for database connection and common functions
+include '../scripts/common.php'; // Database connection and common functions
 include 'VendorCommon.php';
 
-// Fetch stall_id and food_court_id for the logged-in user
-$user_id = $_SESSION['user_id'];
+// Fetch stall_id and food_court_id for the logged-in vendor
+$user_id = $_SESSION['user_id'] ?? 0; // Ensure user_id is set
 $query = "SELECT stall_id, food_court_id FROM users WHERE user_id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
@@ -14,13 +14,13 @@ $user = $result->fetch_assoc();
 $stall_id = $user['stall_id'] ?? 0;
 $food_court_id = $user['food_court_id'] ?? 0;
 
-// Fetch open orders for this stall and food court
+// Fetch open orders specific to the vendor
 $query = "
     SELECT 
         o.order_id, 
         o.tracking_id, 
         u.username, 
-        o.total_amount, 
+        SUM(oi.price * oi.quantity) AS total_amount,  -- Calculate the total dynamically
         o.payment_method, 
         o.order_date, 
         GROUP_CONCAT(CONCAT(fi.food_name, ' x', oi.quantity, ' ($', oi.price, ')') SEPARATOR ', ') AS order_details
@@ -28,22 +28,18 @@ $query = "
     JOIN users u ON o.user_id = u.user_id
     JOIN order_items oi ON o.order_id = oi.order_id
     JOIN food_items fi ON oi.food_item_id = fi.food_item_id
-    WHERE o.status = 'Pending' 
-    AND fi.food_court_id = ? 
-    AND fi.stall_id = ?
-    GROUP BY o.order_id
-    ORDER BY o.order_date DESC;";
+    WHERE fi.stall_id = ? 
+      AND fi.food_court_id = ? 
+      AND o.status = 'Pending' 
+    GROUP BY o.order_id, o.tracking_id, u.username, o.payment_method, o.order_date
+    ORDER BY o.order_date DESC";
+
 $stmt = $conn->prepare($query);
-$stmt->bind_param("ii", $food_court_id, $stall_id); // Bind the vendor's food_court_id and stall_id
+$stmt->bind_param("ii", $stall_id, $food_court_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Check if the query returned any results
-if ($result->num_rows > 0) {
-    $orders = $result->fetch_all(MYSQLI_ASSOC); // Fetch all results as an associative array
-} else {
-    $orders = null; // Set to null if no orders are found
-}
+$orders = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : null;
 
 // Handle order status updates
 if (isset($_POST['close_order'])) {
@@ -66,7 +62,7 @@ if (isset($_POST['cancel_order'])) {
         $conn->begin_transaction();
 
         try {
-            // Fetch the order details (user_id and total_amount)
+            // Fetch order details
             $stmt = $conn->prepare("SELECT user_id, total_amount FROM orders WHERE order_id = ?");
             $stmt->bind_param('i', $order_id);
             $stmt->execute();
